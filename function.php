@@ -38,7 +38,14 @@ function LoadBlock($pblock = "") {
 function loadCode($item){
     global $db;
     if (!$item['code']) {
-        include ("modules/block/" . $item['filename'] . "." . $item['sfile']);
+        
+        $file = __DIR__.'/modules/block/'. $item['filename'] . '.' . $item['sfile'];
+        if(is_file($file)){
+            require_once $file;
+        }else{
+            require_once 'modules/block/'. $item['filename'] . '.' . $item['sfile'];
+        }
+        
     } else {
         echo $item['code'];
     }

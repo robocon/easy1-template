@@ -98,7 +98,15 @@ $template = $db->fetch($query_template);
                         <?php } ?>
                     
                     <?php }else{ ?>
-                        <?php require_once $MODPATHFILE; ?>
+                        <?php 
+                        $new_modules = str_replace(WEB_PATH.'/modules/', '', $MODPATHFILE);
+                        $modules_file = __DIR__.'/modules/'.$new_modules;
+                        if(is_file($modules_file)){
+                            require_once $modules_file;
+                        }else{
+                            require_once $MODPATHFILE;
+                        }
+                        ?>
                     <?php } ?>
                 </div>
                 
