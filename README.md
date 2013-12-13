@@ -6,7 +6,9 @@
 
 วิธีการ Override Modules ตัวเดิม
 --------------------------------------
-ทำได้โดยการเพิ่มไฟล์เข้าไปใน templates/easy1/modules/
+ทำได้โดยการเพิ่มไฟล์เข้าไปใน templates/easy1/ ชื่อ modules/
+
 ตัวอย่างเช่น 
+
 ต้องการเขียน Block "เมนูหลัก" ให้เป็นรูปแบบใหม่ก็ให้เพิ่มไฟล์ที่ชื่อ mainmenu.php เข้าไปใน templates/easy1/modules/block/mainmenu.php 
 เป็นต้น

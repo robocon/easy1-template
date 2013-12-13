@@ -1,5 +1,10 @@
 <?php
+/**
+ * @copyright   (c) 3013 easy1 Atomy Maxsite
+ * @license     MIT-LICENSE.txt
+ */
 require_once 'templates/easy1/lang/tem_thai_utf8.php';
+
 $db->connectdb(DB_NAME, DB_USERNAME, DB_PASSWORD);
 $query_config = $db->select_query("SELECT * FROM " . TB_CONFIG." AS a WHERE a.posit IN('footer1','footer2')");
 
@@ -22,7 +27,7 @@ $template = $db->fetch($query_template);
         
         <link rel="stylesheet" href="templates/easy1/css/style.css">
         <script src="templates/easy1/js/libs/modernizr-2.0.6.min.js"></script>
-        
+        <script src="templates/easy1/js/jquery-1.10.2.min.js"></script>
     </head>
 
     <body>
@@ -144,12 +149,10 @@ $template = $db->fetch($query_template);
         </div>
         <div id="btp">Back to top &uarr;</div>
 
-        <script src="templates/easy1/js/jquery-1.10.2.min.js"></script>
         <script type="text/javascript">
             jQuery.noConflict();
             (function( $ ) {
               $(function() {
-                // More code using $ as alias to jQuery
                 var $w = $(window);
                 var nav = $('#header-container');
                 var navTopY = nav.offset().top;
@@ -175,8 +178,7 @@ $template = $db->fetch($query_template);
                 
               });
             })(jQuery);
-
-
         </script>
+        
     </body>
 </html>

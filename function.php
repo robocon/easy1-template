@@ -1,5 +1,4 @@
 <?php
-
 function LoadBlock($pblock = "") {
     global $db;
     $db->connectdb(DB_NAME, DB_USERNAME, DB_PASSWORD);
