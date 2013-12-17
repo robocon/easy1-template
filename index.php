@@ -3,9 +3,20 @@
  * @copyright   (c) 3013 easy1 Atomy Maxsite
  * @license     MIT-LICENSE.txt
  */
-require_once 'templates/easy1/lang/tem_thai_utf8.php';
+define('AM_EXEC', 1);
+define('AM_TEMPLATE_VERSION', '1.0');
+define('AM_TEMP_DIR', dirname(__FILE__));
 
-$db->connectdb(DB_NAME, DB_USERNAME, DB_PASSWORD);
+require_once 'lang/tem_thai_utf8.php';
+require_once 'lib/language.php';
+require_once 'lib/template.php';
+
+$temp = new AM_Template($db);
+
+// Set position in template
+$positions = array('pathway', 'left', 'right', 'user2', 'center', 'user1', 'bottom');
+$locations = $temp->block_count($positions);
+
 $query_config = $db->select_query("SELECT * FROM " . TB_CONFIG." AS a WHERE a.posit IN('footer1','footer2')");
 
 $query_template = $db->select_query("SELECT * FROM " . TB_TEMPLATES." AS a WHERE a.sort=1 AND a.temname='easy1'");
@@ -66,18 +77,18 @@ $template = $db->fetch($query_template);
         <div id="main-container">
             <div id="main" class="wrapper clearfix">
 
-                <?php if (CountBlock('pathway')) { ?>
-                    <?php LoadBlock('pathway'); ?>
+                <?php if ($locations['pathway'] > 0 ) { ?>
+                    <?php $temp->loadBlock('pathway'); ?>
                 <?php } ?>
                 <?php $left = $right = false; ?>
-                <?php if (CountBlock('left') && $name!='admin') { $left = true;?>
+                <?php if ($locations['left'] > 0 && $name!='admin') { $left = true;?>
                     <div id="left-contain">
-                    <?php LoadBlock('left'); ?>
+                    <?php $temp->loadBlock('left'); ?>
                     </div>
                 <?php } ?>
                 
                 <?php
-                if (CountBlock('right') && ($name=='index' || $name=='') && $name!=='admin') {
+                if ($locations['right'] > 0 && ($name=='index' || $name=='') && $name!=='admin') {
                     $right = true;
                 }
                 
@@ -90,26 +101,39 @@ $template = $db->fetch($query_template);
                 
                 <div id="content-main" style="<?php echo $contain_width?>">
                     <?php if($name=='index' || $name==''){ ?>
-                        <?php if (CountBlock('user2')) { ?>
-                            <?php LoadBlock('user2'); ?>
+                        <?php if ($locations['user2'] > 0) { ?>
+                            <?php $temp->loadBlock('user2'); ?>
                         <?php } ?>
 
-                        <?php if (CountBlock('center')) { ?>
-                            <?php LoadBlock('center'); ?>
+                        <?php if ($locations['center'] > 0) { ?>
+                            <?php $temp->loadBlock('center'); ?>
                         <?php } ?>
 
-                        <?php if (CountBlock('user1')) { ?>
-                            <?php LoadBlock('user1'); ?>
+                        <?php if ($locations['user1'] > 0) { ?>
+                            <?php $temp->loadBlock('user1'); ?>
                         <?php } ?>
                     
                     <?php }else{ ?>
-                        <?php 
-                        $new_modules = str_replace(WEB_PATH.'/modules/', '', $MODPATHFILE);
-                        $modules_file = __DIR__.'/modules/'.$new_modules;
-                        if(is_file($modules_file)){
-                            require_once $modules_file;
+                        <?php
+                        // Reserved method $_GET
+                        $mod_name = isset($_GET['name']) ? strval($_GET['name']) : 'index' ;
+                        $mod_file = isset($_GET['file']) ? strval($_GET['file']) : 'index' ;
+                        $mod_path = '/modules/'.$mod_name.'/'.$mod_file.'.php';
+
+                        if(is_file(AM_TEMP_DIR.$mod_path)){
+
+                            // Load language before load modules
+                            $lang = AM_TEMP_DIR.'/lang/'.AM_Template::$default_lang.'/'.$mod_name.'/'.$mod_file.'.php';
+                            if(is_file($lang)){
+                                require_once $lang;
+                            }
+
+                            // Set language before using in block
+                            $l = new AM_Text($T);
+                            require_once AM_TEMP_DIR.$mod_path;
                         }else{
-                            require_once $MODPATHFILE;
+                            $original_path = dirname(dirname(AM_TEMP_DIR));
+                            require_once $original_path.$mod_path;
                         }
                         ?>
                     <?php } ?>
@@ -117,7 +141,7 @@ $template = $db->fetch($query_template);
                 
                 <?php if (CountBlock('right') && ($name=='index' || $name=='') && $name!=='admin') { ?>
                     <div id="right-contain">
-                    <?php LoadBlock('right'); ?>
+                    <?php $temp->loadBlock('right'); ?>
                     </div>
                 <?php } ?>
                 
@@ -126,8 +150,8 @@ $template = $db->fetch($query_template);
 
         <div id="footer-container">
             <footer class="wrapper">
-                <?php if (CountBlock('bottom')) { ?>
-                    <?php LoadBlock('bottom'); ?>
+                <?php if ($locations['bottom'] > 0) { ?>
+                    <?php $temp->loadBlock('bottom'); ?>
                 <?php } ?>
                 <nav>
                     <ul>
