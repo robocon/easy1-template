@@ -1,4 +1,4 @@
-<?php
+<?php defined('AM_EXEC') or die('Restricted Access');
 $query = $db->select_query("SELECT `p_name`,`p_position`,`p_data`,`p_pic` FROM `".TB_personnel."` WHERE `boss`=1 LIMIT 1;");
 $head = $db->fetch($query);
 ?>
