@@ -9,6 +9,7 @@
     #user-logedin-name{text-align: center;}
 </style>
 <?php
+
 // If not loged in yet
 if(!isset($_SESSION['login_true']) && !isset($_SESSION['admin_user'])){
     
@@ -45,7 +46,7 @@ if(!isset($_SESSION['login_true']) && !isset($_SESSION['admin_user'])){
             <label for="loginCaptcha">
                 <span><?php echo $l->t('Captcha')?></span>
             </label>
-            <img src="capcha/val_img.php?width=60&height=23&characters=4" />
+            <img src="capcha/val_img.php?width=60&height=25&characters=4" />
             <input type="text" id="loginCaptcha" name="security_code" placeholder="<?php echo $l->t('Captcha',true)?>"/>
         </div>
         <div class="item-field"><input type="submit" value="<?php echo $l->t('Log In')?>" /></div>
