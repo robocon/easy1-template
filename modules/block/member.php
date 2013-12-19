@@ -18,10 +18,10 @@ if(!isset($_SESSION['login_true']) && !isset($_SESSION['admin_user'])){
     $(function(){
         $('#login-form').submit(function(){
             if($('#loginUsername').val()==''){
-                alert('<?php echo _MEMBER_MOD_CHECK_USER_MESS_NULL;?>');
+                alert('<?php echo $l->t('Please insert your username'); ?>');
                 return false;
             }else if($('#loginPassword').val()==''){
-                alert('<?php echo _MEMBER_MOD_FORM_JAVA_PASS;?>');
+                alert('<?php echo $l->t('Please insert your password'); ?>');
                 return false;
             }
 
@@ -75,28 +75,28 @@ if(!isset($_SESSION['login_true']) && !isset($_SESSION['admin_user'])){
         <ul class="menu-lists">
             <?php if(isset($_SESSION['admin_user']) && !isset($_SESSION['login_true'])){ ?>
             <li>
-                <a href="index.php?name=admin&file=member_detail"><?php echo _MEMBER_AUTH; ?></a>
+                <a href="index.php?name=admin&file=member_detail"><?php echo $l->t('Account Settings'); ?></a>
             </li>
             <li>
-                <a href="index.php?name=blog&file=blogad"><?php echo _MEMBER_BLOG; ?></a>
+                <a href="index.php?name=blog&file=blogad"><?php echo $l->t('All Blogs'); ?></a>
             </li>
             <li>
-                <a href="index.php?name=blog&file=blogad&op=article_add"><?php echo _MEMBER_BLOGADD; ?></a>
+                <a href="index.php?name=blog&file=blogad&op=article_add"><?php echo $l->t('Add blog'); ?></a>
             </li>
             <?php } ?>
             <?php if(isset($_SESSION['login_true']) && !isset($_SESSION['admin_user'])){ ?>
             <li>
-                <a href="index.php?name=member&file=member_detail"><?php echo _MEMBER_AUTH; ?></a>
+                <a href="index.php?name=member&file=member_detail"><?php echo $l->t('Account Settings'); ?></a>
             </li>
             <li>
-                <a href="index.php?name=blog&file=blog"><?php echo _MEMBER_BLOG; ?></a>
+                <a href="index.php?name=blog&file=blog"><?php echo $l->t('All Blogs'); ?></a>
             </li>
             <li>
-                <a href="index.php?name=blog&file=blog&op=article_add"><?php echo _MEMBER_BLOGADD; ?></a>
+                <a href="index.php?name=blog&file=blog&op=article_add"><?php echo $l->t('Add blog'); ?></a>
             </li>
             <?php } ?>
             <li>
-                <a href="index.php?name=member&file=logout"><?php echo _MEMBER_EXIT; ?></a>
+                <a href="index.php?name=member&file=logout"><?php echo $l->t('Log Out'); ?></a>
             </li>
         </ul>
     </div>

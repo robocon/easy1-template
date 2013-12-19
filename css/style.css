@@ -497,3 +497,16 @@ ul.menu-lists{
         padding: 0;
     }
 }
+
+/**
+ * Readmore style
+ */
+.readmore{display: block;font-weight: bold;text-align: right;}
+.readmore:after{content: ' »';}
+
+/**
+ * Override table th
+ */
+table.grids th{
+    background-color: #F0F0F0;
+}

@@ -1,49 +1,48 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
-$result = $db->select_query("select * from " . TB_ALUMNUS . " order by id DESC LIMIT 10");
+$result = $db->select_query("SELECT * FROM " . TB_ALUMNUS . " ORDER BY id DESC LIMIT 10");
 $NRow = $db->rows($result);
 
 if ($NRow == 0) {
     ?>
-    <p><b><?php echo _ALUM_NULL ?></b></p>
+    <p><b><?php echo $l->t('No data'); ?></b></p>
     <?php
 } else {
     ?>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="grids">
-        <tr class="odd" style="background-color: #CCE9FD; text-align: center; font-weight: bold;">
-            <td width="170"><?php echo _ALUM_TABLE_COL2 ?></td>
-            <td width="40"><?php echo _ALUM_TABLE_COL3 ?></td>
-            <td width="40">ปีที่จบ</td>
-            <td width="70">เบอร์ติดต่อ</td>
-            <td width="60"><?php echo _ALUM_TABLE_COL6 ?></td>
+        <tr>
+            <th><?php echo $l->t('Name'); ?></th>
+            <th><?php echo $l->t('Sex'); ?></th>
+            <th><?php echo $l->t('Graduation'); ?></th>
+            <th><?php echo $l->t('Phone'); ?></th>
+            <th><?php echo $l->t('Status'); ?></th>
         </tr>
         <?php
-        while ($arr = $db->sql_fetchrow($result)) {
-
+        while ($arr = $db->fetch($result)) {
             $sex = "-";
-            if ($arr[7] == "1") {
-                $sex = _ALUM_SEX1;
-            } elseif ($arr[7] == "2") {
-                $sex = _ALUM_SEX2;
-            } elseif ($arr[7] == "3" || empty($arr[7])) {
-                $sex = _ALUM_SEX3;
+            if ($arr['sex'] == "1") {
+                $sex = $l->t('Male');
+            } elseif ($arr['sex'] == "2") {
+                $sex = $l->t('Female');
+            } elseif ($arr['sex'] == "3" || empty($arr['sex'])) {
+                $sex = $l->t('Not sure');
             }
 
             $status = "-";
-            if ($arr[17] != '' && $arr[18] == '') {
-                $status = _ALUM_STATUS_EDU1;
-            } else if ($arr[17] == '' && $arr[18] != '') {
-                $status = _ALUM_STATUS_EDU2;
+            if ($arr['school'] != '' && $arr['WORK'] == '') {
+                $status = $l->t('Study');
+            } else if ($arr['school'] == '' && $arr['WORK'] != '') {
+                $status = $l->t('Work');
             } else {
-                $status = _ALUM_STATUS_EDU3;
+                $status = $l->t('No data');
             }
             ?>
             <tr>
                 <td>
-                	<a href="index.php?name=alumnus&file=view&id=<?= $arr[0]; ?>" ><?php echo $arr[2] . " " . $arr[3]; ?></a>
+                	<a href="index.php?name=alumnus&file=view&id=<?= $arr['id']; ?>" ><?php echo $arr['first_name'] . " " . $arr['last_name']; ?></a>
                 </td>
                 <td align="center"><?php echo $sex ?></td>
-                <td align="center"><?php echo $arr['11'] ?></td>
-                <td align="center"><?php echo $arr['30'] ?></td>
+                <td align="center"><?php echo $arr['yearfin'] ?></td>
+                <td align="center"><?php echo $arr['tel'] ?></td>
                 <td align="center"><?php echo $status ?></td>
             </tr>
         <?php
@@ -54,5 +53,5 @@ if ($NRow == 0) {
     }
     ?>
 <div style="text-align: right; font-weight: bold;">
-    <a href=index.php?name=alumnus ><?php echo _ALUM_LINK_ALL ?></a>&nbsp;|&nbsp;<a href=index.php?name=alumnus&file=add><?php echo _ALUM_LINK_ADD ?></a>
+    <a href=index.php?name=alumnus ><?php echo $l->t('See more'); ?></a>&nbsp;|&nbsp;<a href=index.php?name=alumnus&file=add><?php echo $l->t('Register'); ?></a>
 </div>

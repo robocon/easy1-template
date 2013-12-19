@@ -1,10 +1,7 @@
 <?php defined('AM_EXEC') or die('Restricted Access'); ?>
 <ul class="menu-lists">
     <?php
-    $sql = "SELECT name, menuname, links, target"
-            . " FROM " . TB_PAGE
-            . " WHERE status='1' AND menugr='mainmenu'"
-            . " ORDER BY sort ASC";
+    $sql = "SELECT `name`, `menuname`, `links`, `target` FROM `".TB_PAGE."` WHERE `status`='1' AND `menugr`='mainmenu' ORDER BY `sort` ASC";
     $query = $db->select_query($sql);
 
     while ($item = $db->fetch($query)) {

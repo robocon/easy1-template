@@ -14,7 +14,7 @@ class AM_Text{
      */
     public function t($string,$force=false){
         $translation = $this->T;
-        if(array_key_exists($string, $translation) && $force===false){
+        if(!is_null($translation) && array_key_exists($string, $translation) && $force===false){
             return $translation[$string];
         }else{
             return $string;
