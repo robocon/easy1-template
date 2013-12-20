@@ -1,6 +1,6 @@
 <?php defined('AM_EXEC') or die('Restricted Access'); ?>
 <style type="text/css">
-    #news-lists{list-style: none;padding: 0px;}
+    #news-lists{list-style: none;padding: 0;}
     #news-lists li {border-bottom: 1px solid #ECECEC;margin-bottom: 7px;}
     #news-lists a{font-size: 17px; font-weight: bold;}
     #news-lists span{display: block;color: #999999;font-size: 11px;}

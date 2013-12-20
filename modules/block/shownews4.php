@@ -3,7 +3,7 @@ $news4_query = $db->select_query("SELECT * FROM " . TB_NEWS . " WHERE category =
 $i = 1;
 ?>
 <style type="text/css">
-    #general-lists{list-style: none;padding: 0px;}
+    #general-lists{list-style: none;padding: 0;}
     #general-lists p{margin: 0}
     #general-lists li {border-bottom: 1px solid #ECECEC;margin-bottom: 7px;}
     #general-lists li.general-headline{min-height: 200px;}

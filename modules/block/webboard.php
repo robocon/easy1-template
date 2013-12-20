@@ -1,13 +1,8 @@
 <?php defined('AM_EXEC') or die('Restricted Access'); ?>
 <style type="text/css">
-.webboard-topic a{
-	font-size: 17px;
-	color: #357EB0!important;
-}
-.webboard-detail, .webboard-topic span {
-	color: #999;
-	font-size: 11px;
-}
+.webboard-topic a{font-size: 17px; color: #357EB0!important; }
+.webboard-detail,
+.webboard-topic span {color: #999; font-size: 11px; }
 </style>
 <table class="grids" id="webboard-latest">
 	<tr>

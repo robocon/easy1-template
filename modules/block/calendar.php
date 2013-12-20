@@ -22,7 +22,7 @@ $rows = $db->rows($query);
 if($rows > 0){
 ?>
 <style type="text/css">
-#event-lists{list-style: none; padding: 0px; margin: 0px; }
+#event-lists{list-style: none; padding: 0; margin: 0; }
 #event-lists li{border-bottom: 1px solid #ECECEC; margin-bottom: 7px; }
 #event-lists a{font-size: 17px; font-weight: bold; }
 #event-lists span{font-size: 11px; color: #999; display: block; }

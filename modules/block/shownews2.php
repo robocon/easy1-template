@@ -2,7 +2,7 @@
 $query = $db->select_query("SELECT * FROM " . TB_RESEARCH . " ORDER BY id DESC LIMIT 7 ");
 ?>
 <style type="text/css">
-    #research-lists{list-style: none;padding: 0px;}
+    #research-lists{list-style: none;padding: 0;}
     #research-lists li {border-bottom: 1px solid #ECECEC;margin-bottom: 7px;}
     #research-lists a{font-size: 17px; font-weight: bold;}
     #research-lists span{display: block;color: #999999;font-size: 11px;}
