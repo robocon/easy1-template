@@ -41,7 +41,8 @@
 					</td>
 					<td align="right">
 						<?php
-						$today_sql = $main_query." WHERE `ct_time` >= ".(time()-86400);
+						$diff_time = time() - ((60*date('i'))*date('G'));
+						$today_sql = $main_query." WHERE `ct_time` >= ".$diff_time;
 						$query = $db->select_query($today_sql);
 						$today = $db->fetch($query);
 						?>
