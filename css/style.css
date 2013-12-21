@@ -374,6 +374,7 @@ header {
 .column-center,
 .column-user1{
     margin-bottom: 15px;
+    position: relative;
 }
 .column-left h3,
 .column-right h3,
@@ -491,6 +492,11 @@ ul.menu-lists{
         text-align: left;
     }
 }
+@media (min-width: 710px){
+    #header-container header nav{
+        display: block!important;
+    }
+}
 @media (max-width: 480px) {
     #header-container li a{
         width: 100%;
@@ -507,6 +513,4 @@ ul.menu-lists{
 /**
  * Override table th
  */
-table.grids th{
-    background-color: #F0F0F0;
-}
+table.grids th{background-color: #F0F0F0; }

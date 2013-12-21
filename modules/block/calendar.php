@@ -1,6 +1,6 @@
 <?php defined('AM_EXEC') or die('Restricted Access'); ?>
 <style type="text/css">
-.calendar td {height: 26px; width: 29px!important; }
+.calendar td {height: 26px; width: 29px!important;vertical-align: bottom; }
 .calendarHeader{font-size: 13px; font-weight: bold; }
 .calendarToday {border-bottom: 1px solid #999; background-color: #3C8DC5; font-weight: bold; color: #FFF; }
 </style>
