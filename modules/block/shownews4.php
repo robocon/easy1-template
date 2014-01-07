@@ -5,8 +5,8 @@ $i = 1;
 <style type="text/css">
     #general-lists{list-style: none;padding: 0;}
     #general-lists p{margin: 0}
-    #general-lists li {border-bottom: 1px solid #ECECEC;margin-bottom: 7px;}
-    #general-lists li.general-headline{min-height: 200px;}
+    #general-lists li {border-bottom: 1px solid #ECECEC;padding-bottom: 7px;}
+    #general-lists li.general-headline{float:left;width:100%;}
     #general-lists li img{float: left; margin-right: 5px;}
     #general-lists a{font-size: 17px; font-weight: bold;}
     #general-lists span{display: block;color: #999999;font-size: 11px;}
@@ -28,7 +28,7 @@ $i = 1;
                 if ($news4['pic'] == 1) {
                     $img = "icon/news_".$news4['post_date'].".jpg";
                 }else{
-                    $img = "images/icon/empty_thumb.jpg";
+                    $img = "images/icon/Apps.png";
                 }
                 ?>
                 <img src="<?php echo $img?>" class="mysborder module-thumb">
