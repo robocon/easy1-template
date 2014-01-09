@@ -118,7 +118,7 @@ $template = $db->fetch($query_template);
                         // Reserved method $_GET
                         $mod_name = isset($_GET['name']) ? strval($_GET['name']) : 'index' ;
                         $mod_file = isset($_GET['file']) ? strval($_GET['file']) : 'index' ;
-                        $mod_path = '/modules/'.$mod_name.'/'.$mod_file.'.php';
+                        $mod_path = '/modules/'.str_replace('../','',$mod_name).'/'.str_replace('../','',$mod_file).'.php';
 
                         if(is_file(AM_TEMP_DIR.$mod_path)){
 
