@@ -104,7 +104,7 @@ if (empty($action)) {
 	$key = addslashes($_GET['key']);
 	$match = preg_match('/([a-z0-9]){40}/i', $key);
 
-	$select = $db->select_query("SELECT * FROM ".WEB_MEMBER." WHERE reset_key = '$key';");
+	$select = $db->select_query("SELECT id FROM ".TB_MEMBER." WHERE reset_key = '$key';");
 	$rows = $db->rows($select);
 	if($rows>0 && $match>0 ){
 		?>
@@ -126,15 +126,15 @@ if (empty($action)) {
 
 	if($key===$_SESSION['form_key_reset'] && $match>0){
 	
-		$select = $db->select_query("SELECT id FROM ".WEB_MEMBER." WHERE reset_key = '$key';");
+		$select = $db->select_query("SELECT id FROM ".TB_MEMBER." WHERE reset_key = '$key';");
 		$member = $db->fetch($select);
-		$db->update_db(WEB_MEMBER,array("password" => md5($_POST['password']), "reset_key" => ''),"id = ".$member['id']);
+		$db->update_db(TB_MEMBER,array("password" => md5($_POST['password']), "reset_key" => ''),"id = ".$member['id']);
 
-		$query = $db->select_query("SELECT id FROM ".WEB_ADMIN." WHERE id = '".$member['id']."';");
+		$query = $db->select_query("SELECT id FROM ".TB_ADMIN." WHERE id = '".$member['id']."';");
 		$admin_row = $db->rows($query);
 		if($admin_row > 0){
 			$admin = $db->fetch($query);
-			$db->update(WEB_ADMIN,"password = '".md5($_POST['password'])."'","id = ".$admin['id']);
+			$db->update(TB_ADMIN,"password = '".md5($_POST['password'])."'","id = ".$admin['id']);
 		}
 
 		$_SESSION['x_message'] = $l->t("New password has been set");
