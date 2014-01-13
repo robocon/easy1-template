@@ -100,6 +100,17 @@ $template = $db->fetch($query_template);
                 ?>
                 
                 <div id="content-main" style="<?php echo $contain_width?>">
+
+		<?php
+		$x_message = addslashes($_SESSION['x_message']);
+		if($x_message){
+			?>
+			<div id="x-message"> <?php echo $x_message; ?> </div>
+			<?php
+			$_SESSION['x_message'] = null;
+		}
+		?>
+
                     <?php if($name=='index' || $name==''){ ?>
                         <?php if ($locations['user2'] > 0) { ?>
                             <?php $temp->loadBlock('user2'); ?>

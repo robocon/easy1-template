@@ -514,3 +514,14 @@ ul.menu-lists{
  * Override table th
  */
 table.grids th{background-color: #F0F0F0; }
+
+/*
+ * X-MESSAGE
+ */
+#x-message{
+	background-color: #FBFF9E;
+	padding: 5px;
+	font-weight: bold;
+	border-top: 2px solid #EBF16E;
+	border-bottom: 2px solid #EBF16E;
+}
