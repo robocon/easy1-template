@@ -525,3 +525,10 @@ table.grids th{background-color: #F0F0F0; }
 	border-top: 2px solid #EBF16E;
 	border-bottom: 2px solid #EBF16E;
 }
+
+.es1-button{
+	background-color: #3c8dc5;
+	color: #ffffff;
+	border: none;
+	padding: 5px 7px;
+}

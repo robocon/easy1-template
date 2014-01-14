@@ -46,7 +46,7 @@ function checkboard() {
 					<option value="headline" <?php if ($fields == 'headline') { echo "selected"; } ?>><?= _FROM_SEARCH_FIELD_HEADLINE; ?></option>
 				</select>
 				<input type="hidden" name="category" value="<?= $category; ?>">
-				<input type="submit" name="Submit" value="<?= $l->t('Search'); ?>">
+				<input type="submit" class="es1-button" name="Submit" value="<?= $l->t('Search'); ?>">
 				<img src="images/admin/opendir.gif" align="absmiddle"><a href="?name=research"><?= $l->t('See all'); ?></a>
 			</form>
 		</td>

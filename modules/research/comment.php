@@ -5,7 +5,7 @@ $comment = addslashes($_POST['COMMENT']);
 $id = intval($_GET['id']);
 
 if (!$name OR !$comment OR $id==0) {
-	header('Location: index.php?name=research');
+	header('Location: index.php?name=research&file=readresearch&id='.$id);
 }
 
 if(!$login_true && !$admin_user){
@@ -22,6 +22,5 @@ $db->add_db(TB_RESEARCH_COMMENT, array(
     "post_date" => TIMESTAMP
 ));
 
-//header('HTTP/1.1 301 Moved Permanently');
 header('Location: index.php?name=research&file=readresearch&id='.$id);
 exit(0);

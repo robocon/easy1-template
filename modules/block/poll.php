@@ -45,7 +45,7 @@ if($vote===false){
 				?>
 				</ul>
 				<input type="hidden" name="poll_id" id="poll_id" value="<?php echo $poll['id']?>">
-				<input type="submit" id="pollSubmit" value="<?php echo $l->t('Vote')?>">
+				<input type="submit" class="es1-button" id="pollSubmit" value="<?php echo $l->t('Vote')?>">
 			</form>
 		</div>
 	</div>

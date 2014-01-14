@@ -49,7 +49,7 @@ if(!isset($_SESSION['login_true']) && !isset($_SESSION['admin_user'])){
             <img src="capcha/val_img.php?width=60&height=25&characters=4" />
             <input type="text" id="loginCaptcha" name="security_code" placeholder="<?php echo $l->t('Captcha',true)?>"/>
         </div>
-        <div class="item-field"><input type="submit" value="<?php echo $l->t('Log In')?>" /></div>
+        <div class="item-field"><input type="submit" class="es1-button" value="<?php echo $l->t('Log In')?>" /></div>
         <div>
             <a href="index.php?name=member&file=index"><?php echo $l->t('Sign Up')?></a>
         </div>

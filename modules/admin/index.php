@@ -28,7 +28,7 @@ if($admin_user){
 				<label for="password">
 					<?php echo $l->t('Password');?>
 				</label>
-				<span id="forgotpass"><a href="#"><?php echo $l->t('For got your password?');?></a></span>
+				<span id="forgotpass"><a href="index.php?name=member&file=forget_pwd"><?php echo $l->t('For got your password?');?></a></span>
 				<input type="password" name="password" id="password" />
 			</div>
 			<div class="admin-item">

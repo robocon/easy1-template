@@ -35,7 +35,7 @@ if (empty($action)) {
 			</div>
 			<div>
 				<label>&nbsp;</label>
-				<input id="submit-btn" type="submit" name="submit" value="<?= $l->t('Send email');?>">
+				<input class="es1-button" type="submit" name="submit" value="<?= $l->t('Send email');?>">
 			</div>
 		</form>
 	</div>

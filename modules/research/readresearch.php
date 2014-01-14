@@ -287,7 +287,7 @@ echo $ShowPages;
 					    </tr>
 					    <tr>
 						<td width="80" align="right" valign=top></td>
-						<td><INPUT TYPE="submit" value="<?= _FROM_COMMENT_BUTTON_ADD; ?>"><BR>
+						<td><input type="submit" class="es1-button" value="<?= _FROM_COMMENT_BUTTON_ADD; ?>"><BR>
 						    <BR><?= _FROM_COMMENT_WORNING; ?>
 						</td>
 					    </tr>
