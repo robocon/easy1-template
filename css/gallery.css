@@ -1,15 +1,15 @@
 .gallery-cover{
     border: 1px solid #cccccc;
     display: inline-block;
-    width: 230px;
+    width: 202px;
     overflow: hidden;
     margin-right: 8px;
     margin-bottom: 8px;
     position: relative;
 }
 .gallery-img{
-    width: 230px;
-    height: 230px;
+    width: 202px;
+    height: 152px;
     display: block;
     background-position: center;
     background-repeat: no-repeat;

@@ -5,12 +5,24 @@ class AM_Template{
     static $default_lang = 'th';
     protected $db;
     public function __construct($db) {
+        require_once AM_TEMP_DIR.'/lang/'.self::$default_lang.'/'.self::$default_lang.'.php';
+        $l = new AM_Text();
+        AM_Text::add_text($T);
+
+        $ajax = intval($_POST['ajax']);
+        if($ajax > 0){
+            $this->load_ajax();
+        }
+
         if(count((array)$db)>8){
             $this->db = $db;
         }else{
+            $db = New DB();
             $connect = $db->connectdb(DB_NAME,DB_USERNAME,DB_PASSWORD);
             $this->db = $connect;
         }
+
+
     }
 
     public function loadBlock($position = '') {
@@ -52,7 +64,8 @@ class AM_Template{
                 }
                 
                 // Set language before using in block
-                $l = new AM_Text($T);
+                AM_Text::add_text($T);
+                $l = new AM_Text();
                 require_once AM_TEMP_DIR.'/modules/'.$file;
             }else{
                 require_once 'modules/'.$file;
@@ -93,5 +106,46 @@ ORDER BY `pblock` ASC;";
         }
         
         return $items;
+    }
+
+    protected function load_ajax(){
+        $admin_user = empty($_SESSION['admin_user'])? "" : $_SESSION['admin_user'];
+        $admin_pwd = empty($_SESSION['admin_pwd'])? "" : $_SESSION['admin_pwd'];
+        $login_true = empty($_SESSION['login_true'])? "" : $_SESSION['login_true'];
+        $pwd_login = empty($_SESSION['pwd_login'])? "" : $_SESSION['pwd_login'];
+
+        require_once("../../includes/config.in.php");
+        require_once("../../includes/function.in.php");
+        require_once("../../includes/class.mysql.php");
+
+        $db = New DB();
+        $db->connectdb(DB_NAME,DB_USERNAME,DB_PASSWORD);
+
+        self::load_modules($db);
+    }
+
+    static function load_modules($db){
+
+        // Reserved method $_GET
+        $mod_name = isset($_GET['name']) ? strval($_GET['name']) : 'index' ;
+        $mod_file = isset($_GET['file']) ? strval($_GET['file']) : 'index' ;
+        $mod_path = '/modules/'.str_replace('../','',$mod_name).'/'.str_replace('../','',$mod_file).'.php';
+
+        if(is_file(AM_TEMP_DIR.$mod_path)){
+
+            // Load language before load modules
+            $lang = AM_TEMP_DIR.'/lang/'.self::$default_lang.'/'.$mod_name.'/'.$mod_file.'.php';
+            if(is_file($lang)){
+                require_once $lang;
+            }
+
+            // Set language before using in block
+            AM_Text::add_text($T);
+            $l = new AM_Text();
+            require_once AM_TEMP_DIR.$mod_path;
+        }else{
+            $original_path = dirname(dirname(AM_TEMP_DIR));
+            require_once $original_path.$mod_path;
+        }
     }
 }

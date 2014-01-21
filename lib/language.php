@@ -1,8 +1,17 @@
 <?php
 class AM_Text{
-    protected $T;
-    function __construct($T) {
-        $this->T = $T;
+    static $lang;
+    function __construct() {
+    }
+
+    public static function add_text($T){
+        if(is_null($T)) $T = array();
+
+        if(is_null(self::$lang)){
+            self::$lang = $T;
+        }else{
+            self::$lang = array_merge(self::$lang, $T);
+        }
     }
     
     /**
@@ -13,7 +22,7 @@ class AM_Text{
      * @return type         String
      */
     public function t($string,$force=false){
-        $translation = $this->T;
+        $translation = self::$lang;
         if(!is_null($translation) && array_key_exists($string, $translation) && $force===false){
             return $translation[$string];
         }else{

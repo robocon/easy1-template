@@ -5,11 +5,14 @@
  */
 define('AM_EXEC', 1);
 define('AM_TEMPLATE_VERSION', '1.0');
-define('AM_TEMP_DIR', dirname(__FILE__));
+define('AM_TEMP_DIR', str_replace("\\", "/", dirname(__FILE__)));
+define('ROOT_TEMP', str_replace($_SERVER['DOCUMENT_ROOT']."/", "", AM_TEMP_DIR));
+define('AM_APPLICATION', ROOT_TEMP."/modules/");
 
 require_once 'lang/tem_thai_utf8.php';
 require_once 'lib/language.php';
 require_once 'lib/template.php';
+require_once 'lib/date.php';
 
 $temp = new AM_Template($db);
 
@@ -126,26 +129,7 @@ $template = $db->fetch($query_template);
                     
                     <?php }else{ ?>
                         <?php
-                        // Reserved method $_GET
-                        $mod_name = isset($_GET['name']) ? strval($_GET['name']) : 'index' ;
-                        $mod_file = isset($_GET['file']) ? strval($_GET['file']) : 'index' ;
-                        $mod_path = '/modules/'.str_replace('../','',$mod_name).'/'.str_replace('../','',$mod_file).'.php';
-
-                        if(is_file(AM_TEMP_DIR.$mod_path)){
-
-                            // Load language before load modules
-                            $lang = AM_TEMP_DIR.'/lang/'.AM_Template::$default_lang.'/'.$mod_name.'/'.$mod_file.'.php';
-                            if(is_file($lang)){
-                                require_once $lang;
-                            }
-
-                            // Set language before using in block
-                            $l = new AM_Text($T);
-                            require_once AM_TEMP_DIR.$mod_path;
-                        }else{
-                            $original_path = dirname(dirname(AM_TEMP_DIR));
-                            require_once $original_path.$mod_path;
-                        }
+                        AM_Template::load_modules($db);
                         ?>
                     <?php } ?>
                 </div>
