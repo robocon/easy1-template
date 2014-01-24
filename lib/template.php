@@ -1,8 +1,7 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
-
 class AM_Template{
     
-    static $default_lang = 'th';
+    public static $default_lang = 'th';
     protected $db;
     public function __construct($db) {
         require_once AM_TEMP_DIR.'/lang/'.self::$default_lang.'/'.self::$default_lang.'.php';
@@ -121,10 +120,10 @@ ORDER BY `pblock` ASC;";
         $db = New DB();
         $db->connectdb(DB_NAME,DB_USERNAME,DB_PASSWORD);
 
-        self::load_modules($db);
+        $this->load_modules($db);
     }
 
-    static function load_modules($db){
+    public function load_modules($db){
 
         // Reserved method $_GET
         $mod_name = isset($_GET['name']) ? strval($_GET['name']) : 'index' ;

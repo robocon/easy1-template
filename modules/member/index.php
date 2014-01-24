@@ -1,8 +1,6 @@
 <?php
 defined('AM_EXEC') or die('Restricted access');
 ?>
-<link rel="stylesheet" href="<?=ROOT_TEMP?>/css/pure-min.css">
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 <script type="text/javascript">
 jQuery.noConflict();
 (function( $ ) {
@@ -16,9 +14,10 @@ $(function() {
 			dataType: "json",
 			success: function(res){
 				if(res.error==true){
-					$("#x-message").show().text(res.message);
+					$(".x-message").show().text(res.message);
 				}else{
-					$("#x-message").hide();
+					$(".x-message").hide();
+					$("#token").val(res.token);
 					$("#regisForm").submit();
 				}
 				$(".i-spin").fadeOut();
@@ -32,7 +31,7 @@ $(function() {
 <div>
 	<h1><?php echo $l->t("Sign up"); ?></h1>
 	<div class="modules-sub-title"></div>
-	<form method="post" id="regisForm" name="regisForm" action="index.php?name=member&file=member_edit_add" class="pure-form pure-form-aligned">
+	<form method="post" id="regisForm" name="regisForm" action="index.php?name=member&file=member_edit&action=add" class="pure-form pure-form-aligned">
 		<div class="pure-control-group">
 			<label for="username"><?=$l->t("Username");?></label>
 			<input type="text" name="username" id="username" class="pure-input-1-4" placeholder="Username">
@@ -88,10 +87,11 @@ $(function() {
 		<div class="pure-control-group">
 			<label>&nbsp;</label>
 			<button id="formSubmit" class="pure-button pure-button-primary"><?=$l->t("Sign up");?></button><span class="i-spin"><i class="fa fa-refresh fa-spin fa-lg"></i></span>
+			<input type="hidden" name="token" id="token" value="">
 		</div>
 		<div class="pure-control-group">
 			<label>&nbsp;</label>
-			<div id="x-message" style="display:none;"></div>
+			<div class="x-message" style="display:none;"></div>
 		</div>
 	</form>
 

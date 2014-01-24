@@ -10,9 +10,11 @@ define('ROOT_TEMP', str_replace($_SERVER['DOCUMENT_ROOT']."/", "", AM_TEMP_DIR))
 define('AM_APPLICATION', ROOT_TEMP."/modules/");
 
 require_once 'lang/tem_thai_utf8.php';
+require_once 'lib/database.php';
 require_once 'lib/language.php';
 require_once 'lib/template.php';
 require_once 'lib/date.php';
+require_once 'lib/utilities.php';
 
 $temp = new AM_Template($db);
 
@@ -38,6 +40,9 @@ $template = $db->fetch($query_template);
         <meta name="description" content="<?php echo WEB_TITILE; ?>">
         <meta name="author" content="<?php echo WEB_TITILE; ?>">
         <meta name="viewport" content="width=device-width,initial-scale=1">
+        
+    	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
+    	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
         
         <link rel="stylesheet" href="templates/easy1/css/style.css">
         <script src="templates/easy1/js/libs/modernizr-2.0.6.min.js"></script>
@@ -108,7 +113,7 @@ $template = $db->fetch($query_template);
 		$x_message = addslashes($_SESSION['x_message']);
 		if($x_message){
 			?>
-			<div id="x-message"> <?php echo $x_message; ?> </div>
+			<div class="x-message"> <?php echo $x_message; ?> </div>
 			<?php
 			$_SESSION['x_message'] = null;
 		}
@@ -129,7 +134,28 @@ $template = $db->fetch($query_template);
                     
                     <?php }else{ ?>
                         <?php
-                        AM_Template::load_modules($db);
+
+                        // Reserved method $_GET
+                        $mod_name = isset($_GET['name']) ? strval($_GET['name']) : 'index' ;
+                        $mod_file = isset($_GET['file']) ? strval($_GET['file']) : 'index' ;
+                        $mod_path = '/modules/'.str_replace('../','',$mod_name).'/'.str_replace('../','',$mod_file).'.php';
+
+                        if(is_file(AM_TEMP_DIR.$mod_path)){
+
+                            // Load language before load modules
+                            $lang = AM_TEMP_DIR.'/lang/'.AM_Template::$default_lang.'/'.$mod_name.'/'.$mod_file.'.php';
+                            if(is_file($lang)){
+                                require_once $lang;
+                            }
+
+                            // Set language before using in block
+                            AM_Text::add_text($T);
+                            $l = new AM_Text();
+                            require_once AM_TEMP_DIR.$mod_path;
+                        }else{
+                            $original_path = dirname(dirname(AM_TEMP_DIR));
+                            require_once $original_path.$mod_path;
+                        }
                         ?>
                     <?php } ?>
                 </div>

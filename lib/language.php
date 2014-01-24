@@ -1,6 +1,6 @@
-<?php
+<?php defined('AM_EXEC') or die('Restricted Access');
 class AM_Text{
-    static $lang;
+    private static $lang;
     function __construct() {
     }
 
@@ -21,12 +21,20 @@ class AM_Text{
      * @param type $force   Boolean
      * @return type         String
      */
-    public function t($string,$force=false){
+    public static function t($string,$force=false){
         $translation = self::$lang;
         if(!is_null($translation) && array_key_exists($string, $translation) && $force===false){
             return $translation[$string];
         }else{
             return $string;
         }
+    }
+
+    public static function sprintf($string){
+	    $items = func_get_args();
+	    if(count($items)>0){
+		    $items[0] = self::t($items[0]);
+		    return call_user_func_array('sprintf', $items);
+	    }
     }
 }

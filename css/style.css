@@ -518,7 +518,7 @@ table.grids th{background-color: #F0F0F0; }
 /*
  * X-MESSAGE
  */
-#x-message{
+.x-message{
 	background-color: #FBFF9E;
 	padding: 5px;
 	font-weight: bold;

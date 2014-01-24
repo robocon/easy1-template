@@ -1,55 +1,59 @@
 <?php defined('AM_EXEC') or die('Restricted Access'); ?>
 <style type="text/css">
-    #login-form{width: 167px;margin: 0 auto;}
-    #login-form .item-field{margin-bottom: 4px;}
-    #login-form label{display: block;font-weight: bold;}
-    #login-form label[for="loginCaptcha"]{display: inline;}
-    #user-logedin p{margin: 0;}
-    #user-logedin ul{list-style: none;}
-    #user-logedin-name{text-align: center;}
+label[for="loginCaptcha"]{ display:inline; }
+#user-logedin p{margin: 0;}
+#user-logedin ul{list-style: none;}
+#user-logedin-name{text-align: center;}
+#login-response{ display:none; }
 </style>
 <?php
 
 // If not loged in yet
 if(!isset($_SESSION['login_true']) && !isset($_SESSION['admin_user'])){
-    
     ?>
     <script type="text/javascript">
-    $(function(){
-        $('#login-form').submit(function(){
-            if($('#loginUsername').val()==''){
-                alert('<?php echo $l->t('Please insert your username'); ?>');
-                return false;
-            }else if($('#loginPassword').val()==''){
-                alert('<?php echo $l->t('Please insert your password'); ?>');
-                return false;
-            }
+	jQuery.noConflict();
+	(function( $ ) {
+	$(function() {
+		$('#login-form').submit(function(){
+			var login_box = $("#login-response");
+			if($('#loginUsername').val()==''){
+				login_box.fadeIn().text('<?php echo $l->t('Please insert your username'); ?>').delay(2000).fadeOut();
+				return false;
+			}else if($('#loginPassword').val()==''){
+				login_box.fadeIn().text('<?php echo $l->t('Please insert your password'); ?>').delay(2000).fadeOut();
+				return false;
+			}
 
-            return;
-        });
-    });
+			return;
+		});
+	});
+	})(jQuery);
     </script>
-    <form id="login-form" method="post" action="index.php?name=member&file=login_check">
+    <form id="login-form" class="pure-form pure-form-stacked" method="post" action="index.php?name=member&file=login_check">
         <div class="item-field">
             <label for="loginUsername">
                 <span><?php echo $l->t('Username')?></span>
             </label>
-            <input type="text" id="loginUsername" name="user_login" placeholder="<?php echo $l->t('Username',true)?>"/>
+            <input type="text" id="loginUsername" class="pure-input-1" name="user_login" placeholder="<?php echo $l->t('Username',true)?>"/>
         </div>
         <div class="item-field">
             <label for="loginPassword">
                 <span><?php echo $l->t('Password')?></span>
             </label>
-            <input type="password" id="loginPassword" name="pwd_login" placeholder="<?php echo $l->t('Password',true)?>"/>
+            <input type="password" id="loginPassword" class="pure-input-1" name="pwd_login" placeholder="<?php echo $l->t('Password',true)?>"/>
         </div>
         <div class="item-field">
             <label for="loginCaptcha">
                 <span><?php echo $l->t('Captcha')?></span>
             </label>
             <img src="capcha/val_img.php?width=60&height=25&characters=4" />
-            <input type="text" id="loginCaptcha" name="security_code" placeholder="<?php echo $l->t('Captcha',true)?>"/>
+            <input type="text" id="loginCaptcha" class="pure-input-1" name="security_code" placeholder="<?php echo $l->t('Captcha',true)?>"/>
         </div>
-        <div class="item-field"><input type="submit" class="es1-button" value="<?php echo $l->t('Log In')?>" /></div>
+	<div class="item-field">
+		<input type="submit" class="pure-button pure-button-primary" value="<?php echo $l->t('Log In')?>" />
+	</div>
+	<div id="login-response" class="x-message"></div>
         <div>
             <a href="index.php?name=member&file=index"><?php echo $l->t('Sign Up')?></a>
         </div>
