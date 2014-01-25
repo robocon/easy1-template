@@ -1,6 +1,8 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
 class DBi{
 	private static $db;
+	private static $query;
+	private static $error;
 	public function __construct($dbi){
 		return $dbi;
 	}
@@ -17,6 +19,33 @@ class DBi{
 		}else{
 			return $mysqli;
 		}
+	}
+
+	public static function select($sql){
+		$mysqli = self::connect();
+		if(!$after_query = $mysqli->query($sql)){
+			self::$error = $mysqli->error;
+			return false;
+		}else{
+			self::$query = $after_query;
+			return $after_query;
+		}
+	}
+
+	public static function get_error(){
+		return self::$error;
+	}
+
+	public static function fetch_assoc(){
+		$query = self::$query;
+		$items = array();
+		while($item = $query->fetch_assoc()){
+			$items[] = $item;
+		}
+		return $items;
+	}
+
+	public static function rows(){
 	}
 
 	public static function insert($table, $items){

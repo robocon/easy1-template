@@ -63,4 +63,12 @@ class AM_Utilities{
 		return (strtolower(getenv('HTTPS')) == 'on' ? 'https' : 'http') . '://' . getenv('HTTP_HOST') . (($p = getenv('SERVER_PORT')) != 80 AND $p != 443 ? ":$p" : '');
 	}
 
+	public static function random_str($length=8,$string=""){
+		$str = "abcdefghijkmnpqrstuvwxyz123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+		$len = strlen($str);
+		for ($i = 0; $i <= $length; $i ++) {
+			$string .= $str[mt_rand(0, $len -1)];
+		}
+		return $string;
+	}
 }

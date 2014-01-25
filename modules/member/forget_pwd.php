@@ -1,96 +1,76 @@
 <?php
 defined('AM_EXEC') or die('Restricted access');
 
-function randomstr($length = 8){
-    $str = "abcdefghijkmnpqrstuvwxyz123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-    $len = strlen($str);
-    $ran = '';
-    for ($i = 0; $i <= $length; $i ++) {
-	$ran .= $str[mt_rand(0, $len -1)];
-    }
-    return $ran;
-}
-
 $action = addslashes($_GET['action']);
-
 if (empty($action)) {
 	?>
-	<style type="text/css">
-	#forgot-pass div{ margin: 5px 0px; }
-	#forgot-pass form{ width: 500px; margin: 0 auto; }
-	#forgot-pass label{ display: inline-block; width: 80px; text-align: right; }
-	</style>
 	<h1><?php echo $l->t('Forgot password'); ?></h1>
 	<div class="modules-sub-title"></div>
 	<div id="forgot-pass">
-		<form method="post" action="index.php?name=member&file=forget_pwd&action=send">
-			<div>
+		<form method="post" class="pure-form pure-form-aligned" action="index.php?name=member&file=forget_pwd&action=send">
+			<div class="pure-control-group">
 				<label><?php echo $l->t('Email');?></label>
 				<input name="email" type="text" id="email" size="33">
 			</div>
-			<div>
+			<div class="pure-control-group">
 				<label><?= $l->t('Verify code');?></label>
 				<img src="capcha/val_img.php?width=<?php echo CAPCHA_WIDTH ?>&height=<?php echo CAPCHA_HEIGHT ?>&characters=<?php echo CAPCHA_NUM ?>" class="captcha" />
 				<input name="security_code" type="text" id="security_code" >
 			</div>
-			<div>
+			<div class="pure-control-group">
 				<label>&nbsp;</label>
-				<input class="es1-button" type="submit" name="submit" value="<?= $l->t('Send email');?>">
+				<input class="pure-button pure-button-primary" type="submit" name="submit" value="<?= $l->t('Send email');?>">
 			</div>
 		</form>
 	</div>
 	<?php
 } else if ($action == "send") {
-    
+	$email = addslashes($_POST['email']);
+
 	$patt = '/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/';
-	$match = preg_match($patt, $_POST['email']);
-	if($match==0 || empty($_POST['email'])){
+	$match = preg_match($patt, $email);
+	if($match==0 || empty($email)){
 		header('Location: index.php?name=member&file=forget_pwd');
+		$_SESSION['x_message'] = $l->t("Please input your email");
 		exit(0);
 	}
 	    
 	check_captcha($_POST['security_code']);
 
-	$sql = "SELECT id,email,name,user FROM " . TB_MEMBER . " WHERE email IN('%s');";
-	$query = $db->select_query(sprintf($sql, $_POST['email']));
-	$numrow = $db->rows($query);
+	$sql = "SELECT id,email,name,user FROM ".TB_MEMBER." WHERE email IN('$email');";
+	$select = DBi::select($sql);
+	$numrow = $select->num_rows;
 	if ($numrow === 0 || $numrow===false) {
 		$_SESSION['x_message'] = $l->t("Can not find an email");
 		header('Location: index.php?name=member&file=forget_pwd');
 		exit(0);
 	} else {
-		$dbarr = $db->fetch($query);
-		if ($result !== false && $dbarr!==false) {
+		$dbarr = $select->fetch_assoc();
+		if ($dbarr!==false) {
 			$email = $dbarr['email'];
 			$name = $dbarr['name'];
 			$user = $dbarr['user'];
-			$noncrypt = randomstr();
+			$noncrypt = AM_Utilities::random_str();
 
 			$set_key = sha1($noncrypt);
-			$db->update_db(TB_MEMBER, array("reset_key" => $set_key), "id=" . $dbarr['id']);
-			$link_reset = WEB_URL.'/index.php?name=member&file=forget_pwd&action=formreset&key='.$set_key;
-
-			// Send an email
-			$admin_mail = WEB_EMAIL;
-			$home = WEB_URL;
-			$to = $name.' <'.$email.'>';
-			$from = WEB_EMAIL;
-			$headers = 'MIME-Version: 1.0'."\r\n"
-			.'Content-type: text/html; charset=utf-8'."\r\n"
-			.'To: '.$name.' <'.$email.'>'."\r\n"
-			.'From: '.WEB_EMAIL."\r\n"
-			.'Reply-to: '.WEB_EMAIL."\r\n"
-			.'X-Mailer: PHP mailer'."\r\n";
+			DBi::update(TB_MEMBER, array("reset_key" => $set_key), "id=".$dbarr['id']);
+			$domain = AM_Utilities::get_domain();
+			$link_reset = $domain.'/index.php?name=member&file=forget_pwd&action=formreset&key='.$set_key;
+			
+			$config = AM_Utilities::getconfig();
+			$to = array($name => $email);
+			$from = array($config['title'] => $config['email']);
 			$subject = $l->t("New password has been request");
-			$message = "<p>".$l->t("Dear")." $name,</p>";
+			$message = $l->t("Dear")." $name,";
 			$message .= "<p>&nbsp;</p>";
-			$message .= "<p>".$l->t("This mail was send because the 'forgot password'. To reset a new password, click the follow link").":</p>";
-			$message .= '<a href="'.$link_reset.'">'.$link_reset.'</a>';
-			$message .= "<p>".$l->t("Username").": $user</p>";
-			$message .= "<p>&nbsp;</p>";
-			$message .= "<p>".$l->t("Regards").",</p>";
-			$message .= "<p>".WEB_TITILE."</p>";
-			if(@mail($to,$subject,$message,$headers,$from)){
+			$message .= $l->t("This mail was send because the 'forgot password'. To reset a new password, click the follow link").":";
+			$message .= '<a href="'.$link_reset.'">'.$link_reset."</a><br>";
+			$message .= $l->t("Username").": $user";
+			$message .= "&nbsp;</p>";
+			$message .= $l->t("Regards").",";
+			$message .= $config['title'];
+
+			if(AM_Utilities::sendemail($from, $to, $subject, $message)){
 				$_SESSION['x_message'] = $l->t("Mail has been send, please check your email to change your password");
 			}else{
 				$_SESSION['x_message'] = $l->t("Can not send an email, please contact to system admin");
@@ -104,15 +84,18 @@ if (empty($action)) {
 	$key = addslashes($_GET['key']);
 	$match = preg_match('/([a-z0-9]){40}/i', $key);
 
-	$select = $db->select_query("SELECT id FROM ".TB_MEMBER." WHERE reset_key = '$key';");
-	$rows = $db->rows($select);
+	DBi::connect();
+	$sql = "SELECT id,email,name,user FROM ".TB_MEMBER." WHERE email IN('$email');";
+	$select = DBi::select("SELECT id FROM ".TB_MEMBER." WHERE reset_key = '$key';");
+	$rows = $select->num_rows;
 	if($rows>0 && $match>0 ){
 		?>
 		<h1><?php echo $l->t('Reset your password');?></h1>
-		<form method="post" action="index.php?name=member&file=forget_pwd&action=reset">
+		<div class="modules-sub-title"></div>
+		<form method="post" class="pure-form" action="index.php?name=member&file=forget_pwd&action=reset">
 			<span><?php echo $l->t('New password')?></span>&nbsp;<input type="text" name="password">
 			<input type="hidden" name="key" value="<?php echo $key?>">
-			<input type="submit" value="<?php echo $l->t('reset')?>">
+			<input type="submit" class="pure-button pure-button-primary" value="<?php echo $l->t('reset')?>">
 		</form>
 		<?php	
 		$_SESSION['form_key_reset'] = $key;
@@ -125,16 +108,20 @@ if (empty($action)) {
 	$match = preg_match('/([a-z0-9]){40}/i', $key);
 
 	if($key===$_SESSION['form_key_reset'] && $match>0){
-	
-		$select = $db->select_query("SELECT id FROM ".TB_MEMBER." WHERE reset_key = '$key';");
-		$member = $db->fetch($select);
-		$db->update_db(TB_MEMBER,array("password" => md5($_POST['password']), "reset_key" => ''),"id = ".$member['id']);
-
-		$query = $db->select_query("SELECT id FROM ".TB_ADMIN." WHERE id = '".$member['id']."';");
-		$admin_row = $db->rows($query);
+		DBi::connect();
+		$query = DBi::select("SELECT id FROM ".TB_MEMBER." WHERE reset_key = '$key';");
+		$member = $query->fetch_assoc();
+		$data_update = array(
+			"password" => md5($_POST['password']),
+			"reset_key" => ""
+		);
+		DBi::update(TB_MEMBER, $data_update, "id = ".$member['id']);
+		
+		$query = DBi::select("SELECT id FROM ".TB_ADMIN." WHERE id = '".$member['id']."';");
+		$admin_row = $query->num_rows;
 		if($admin_row > 0){
-			$admin = $db->fetch($query);
-			$db->update(TB_ADMIN,"password = '".md5($_POST['password'])."'","id = ".$admin['id']);
+			$admin = $query->fetch_assoc();
+			DBi::update(TB_ADMIN, array("password" => md5($_POST['password'])), "id=".$admin['id']);
 		}
 
 		$_SESSION['x_message'] = $l->t("New password has been set");
