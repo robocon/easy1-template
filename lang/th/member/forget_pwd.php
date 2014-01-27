@@ -4,10 +4,10 @@ $T = array(
 	'Email' => 'อีเมล์',
 	'Verify code' => 'ยืนยันรหัสผ่าน',
 	'Send email' => 'ส่งอีเมล์',
+	'Please input your email' => 'กรุณาใส่อีเมล์',
 	'Can not find an email' => 'ไม่พบอีเมล์ที่ต้องการ	',
 	'Mail has been send, please check your email to change your password' => 'ส่งอีเมล์เรียบร้อย หากไม่เจอกรุณาตรวจสอบใน Junk mail',
 	'Can not send an email, please contact to system admin' => 'ไม่สามารถส่งอีเมล์ กรุณาติดต่อผู้ดูแลระบบ',
-	// Mail message
 	'New password has been request' => 'มีการร้องขอเพื่อเปลี่ยนรหัสผ่านใหม่',
 	'Dear' => 'เรียน',
 	"This mail was send because the 'forgot password'. To reset a new password, click the follow link" => 'อีเมล์นี้ถูกส่งเนื่องจากมีการ "ลืมรหัสผ่าน" คลิกตามลิ้งค์นี้เพื่อทำการเปลี่ยนรหัสผ่านต่อไป',

@@ -9,7 +9,6 @@ $query = $db->select_query($sql);
 $rows = $db->rows($query);
 if($rows > 0){
 	?>
-	<script src="templates/easy1/modules/block/slidenews/jquery-1.10.2.min.js"></script>
 	<!-- bxSlider Javascript file -->
 	<script src="templates/easy1/modules/block/slidenews/jquery.bxslider.min.js"></script>
 	<!-- bxSlider CSS file -->

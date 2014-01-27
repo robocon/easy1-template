@@ -18,10 +18,10 @@ if(!isset($_SESSION['login_true']) && !isset($_SESSION['admin_user'])){
 		$('#login-form').submit(function(){
 			var login_box = $("#login-response");
 			if($('#loginUsername').val()==''){
-				login_box.fadeIn().text('<?php echo $l->t('Please insert your username'); ?>').delay(2000).fadeOut();
+				login_box.show().text('<?php echo $l->t('Please insert your username'); ?>').delay(2000).fadeOut();
 				return false;
 			}else if($('#loginPassword').val()==''){
-				login_box.fadeIn().text('<?php echo $l->t('Please insert your password'); ?>').delay(2000).fadeOut();
+				login_box.show().text('<?php echo $l->t('Please insert your password'); ?>').delay(2000).fadeOut();
 				return false;
 			}
 

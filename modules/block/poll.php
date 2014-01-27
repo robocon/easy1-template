@@ -11,6 +11,7 @@ $vote = $db->rows($query);
 ?>
 <style type="text/css">
 .poll-display ul{list-style: none; margin: 0; padding: 0;}
+#poll-notify{display:none;}
 .poll-title{font-weight: bold; }
 .vote-item,
 .vote-percent{width: 100%; display: block; }
@@ -26,7 +27,7 @@ if($vote===false){
 	<div class="poll-display">
 		<p class="poll-title"><?php echo $poll['poll_question']?>:</p>
 		<div>
-			<form method="post" id="pollForm" action="index.php?name=ajoxpoll&file=vote">
+			<form method="post" id="pollForm" class="pure-form" action="index.php?name=ajoxpoll&file=vote">
 				<ul>
 				<?php
 				$choices = explode('|', $poll['poll_options']);
@@ -45,13 +46,15 @@ if($vote===false){
 				?>
 				</ul>
 				<input type="hidden" name="poll_id" id="poll_id" value="<?php echo $poll['id']?>">
-				<input type="submit" class="es1-button" id="pollSubmit" value="<?php echo $l->t('Vote')?>">
+				<button class="pure-button pure-button-primary" id="pollSubmit" value=""><?php echo $l->t('Vote')?></button>
 			</form>
+			<div id="poll-notify" class="x-message"></div>
 		</div>
 	</div>
 	<script type="text/javascript">
-	$(function(){
-
+	jQuery.noConflict();
+	(function( $ ) {
+	$(function() {
 		var vote_checked=false;
 		$('.voteid').click(function(){
 			vote_checked=$(this).val();
@@ -61,7 +64,7 @@ if($vote===false){
 
 			var id=$('#poll_id').val();
 			if(vote_checked===false){
-				alert('<?php echo $l->t('Please choose some choice before vote')?>');
+				$("#poll-notify").text('<?php echo $l->t('Please choose some choice before vote')?>').show();
 				return false;
 			}
 			
@@ -73,10 +76,10 @@ if($vote===false){
 					location.reload();
 				}
 			});
-
 			return false;
 		});
 	});
+	})(jQuery);
 	</script>
 	<?php
 }else if($vote>0){
