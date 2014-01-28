@@ -12,5 +12,6 @@ $T = array(
     'Account Settings' => 'ข้อมูลส่วนตัว',
     'All Blogs' => 'ข้อมูลบล็อก',
     'Add blog' => 'เพิ่มบล็อก',
-    'Log Out' => 'ออกจากระบบ'
+    'Log Out' => 'ออกจากระบบ',
+    'Please confirm from email before login :)' => 'กรุณายืนยันอีเมล์ก่อนเข้าใช้งาน'
 );

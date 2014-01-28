@@ -13,6 +13,18 @@ if($action==="add"){
 	$first_name = addslashes($_POST['first_name']);
 	$last_name = addslashes($_POST['last_name']);
 	$email = addslashes($_POST['email']);
+
+	$size = 80;
+	$grav_url = "http://www.gravatar.com/avatar/".md5(strtolower(trim($email)))."?s=".$size."&d=404";
+	$grav_data = @file_get_contents($grav_url);
+	$user_thumb = "";
+	if($grav_data!==false){
+		$user_thumb = time()."_$username.jpg";
+		$fp = fopen("icon/".$user_thumb, 'w');
+		fwrite($fp, $grav_data);
+		fclose($fp);
+	}
+
 	$data_member = array(
 		'member_id' => '',
 		'name' => $first_name." ".$last_name,
@@ -33,7 +45,7 @@ if($action==="add"){
 		'user' => $username,
 		'password' => md5($password),
 		'email' => $email,
-		'member_pic' => "",
+		'member_pic' => $user_thumb,
 		'signup' => date('j/m/Y'),
 		'lastlog' => date('d/m/y - H:i'),
 		'dtnow' => date('d/m/y - H:i'),
