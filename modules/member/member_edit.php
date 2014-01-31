@@ -68,7 +68,7 @@ if($action==="add"){
 		$domain = AM_Utilities::get_domain();
 		$url = "$domain/index.php?name=member&file=member_edit&action=confirm&s=$verify";
 
-		$config = AM_Utilities::getconfig();
+		$config = AM_Utilities::get_config();
 		$from = array($config['title'] => $config['email']);
 		$to = array($first_name => $email);
 		$subject = $l->sprintf("New account on %s",$config['title']);

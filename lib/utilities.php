@@ -1,7 +1,7 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
 class AM_Utilities{
 	private static $config;
-	public static function getconfig(){
+	public static function get_config(){
 		if(!self::$config){
 			$dbi = Dbi::connect();
 			$query = $dbi->query("SELECT * FROM web_config;");

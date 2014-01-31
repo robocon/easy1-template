@@ -37,8 +37,8 @@ if (empty($action)) {
 	    
 	check_captcha($_POST['security_code']);
 
-	$sql = "SELECT id,email,name,user FROM ".TB_MEMBER." WHERE email IN('$email');";
-	$select = DBi::select($sql);
+	$sql = "SELECT id,email,name,user FROM ".TB_MEMBER." WHERE email IN(?);";
+	$select = DBi::select($sql, array($email));
 	$numrow = $select->num_rows;
 	if ($numrow === 0 || $numrow===false) {
 		$_SESSION['x_message'] = $l->t("Can not find an email");
@@ -57,7 +57,7 @@ if (empty($action)) {
 			$domain = AM_Utilities::get_domain();
 			$link_reset = $domain.'/index.php?name=member&file=forget_pwd&action=formreset&key='.$set_key;
 			
-			$config = AM_Utilities::getconfig();
+			$config = AM_Utilities::get_config();
 			$to = array($name => $email);
 			$from = array($config['title'] => $config['email']);
 			$subject = $l->t("New password has been request");
@@ -85,8 +85,7 @@ if (empty($action)) {
 	$match = preg_match('/([a-z0-9]){40}/i', $key);
 
 	DBi::connect();
-	$sql = "SELECT id,email,name,user FROM ".TB_MEMBER." WHERE email IN('$email');";
-	$select = DBi::select("SELECT id FROM ".TB_MEMBER." WHERE reset_key = '$key';");
+	$select = DBi::select("SELECT id FROM ".TB_MEMBER." WHERE reset_key = ?;", array($key));
 	$rows = $select->num_rows;
 	if($rows>0 && $match>0 ){
 		?>
@@ -109,7 +108,7 @@ if (empty($action)) {
 
 	if($key===$_SESSION['form_key_reset'] && $match>0){
 		DBi::connect();
-		$query = DBi::select("SELECT id FROM ".TB_MEMBER." WHERE reset_key = '$key';");
+		$query = DBi::select("SELECT id FROM ".TB_MEMBER." WHERE reset_key = ?;", array($key));
 		$member = $query->fetch_assoc();
 		$data_update = array(
 			"password" => md5($_POST['password']),
@@ -117,7 +116,7 @@ if (empty($action)) {
 		);
 		DBi::update(TB_MEMBER, $data_update, "id = ".$member['id']);
 		
-		$query = DBi::select("SELECT id FROM ".TB_ADMIN." WHERE id = '".$member['id']."';");
+		$query = DBi::select("SELECT id FROM ".TB_ADMIN." WHERE id = ?;", array($member['id']));
 		$admin_row = $query->num_rows;
 		if($admin_row > 0){
 			$admin = $query->fetch_assoc();

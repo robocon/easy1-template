@@ -14,7 +14,7 @@ if(empty($action)){
 			</div>
 			<div class="pure-control-group">
 				<label for="yourmail"><?= $l->t("Email"); ?></label>
-				<input type="text" id="yourmail" class="pure-input-1-3" name="email">
+				<input type="email" id="yourmail" class="pure-input-1-3" name="email">
 			</div>
 			<div class="pure-control-group">
 				<label for="subject"><?= $l->t("Subject"); ?></label>
@@ -42,9 +42,9 @@ if(empty($action)){
 }else if($action=="sendmail"){
 
 	$email = addslashes($_POST['email']);
-	$name = addslashes($_POST['name']);
-	$subject = addslashes($_POST['subject']);
-	$details = addslashes($_POST['details']);
+	$name = htmlspecialchars($_POST['name'], ENT_XHTML);
+	$subject = htmlspecialchars($_POST['subject'], ENT_XHTML);
+	$details = htmlspecialchars($_POST['details'], ENT_XHTML);
 
 	if(empty($email) OR empty($name) OR empty($subject) OR empty($details)){
 		header('Location: index.php?name=contact');
@@ -60,7 +60,7 @@ if(empty($action)){
 
 	check_captcha($_POST['security_code']);
 
-	$config = AM_Utilities::getconfig();
+	$config = AM_Utilities::get_config();
 	$from = array($name => $email);
 	$to = array($config['title'] => $config['email']);
 	$send = AM_Utilities::sendemail($from, $to, $subject, $details);
@@ -69,9 +69,13 @@ if(empty($action)){
 		$data = array(
 			'subject' => $subject,
 			'detail' => $details,
-			'from_mail' => $email
+			'form_mail' => $email
 		);
-		DBi::insert(TB_MAIL, $data);
+		$insert = DBi::insert(TB_MAIL, $data);
+		if($insert===false){
+			DBi::get_error();
+		}
+
 		$msg = $l->t("Send an email successful");
 	}else{
 		$msg = $l->t("Can not send an email, Please contact admin");
