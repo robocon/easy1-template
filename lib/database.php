@@ -3,6 +3,7 @@ class DBi{
 	private static $db;
 	private static $query;
 	private static $error;
+	private static $stmti;
 	public function __construct($dbi){
 		return $dbi;
 	}
@@ -24,7 +25,26 @@ class DBi{
 	public static function select($sql, $items=null){
 		$mysqli = self::connect();
 
-		if($items!==null){
+		// Some Server not support mysqlnd
+		if(extension_loaded('mysqlnd')===false && !is_null($items)){
+
+			$bind_value = array();
+			foreach($items AS $key => $value){
+				$bind_value[] = & $items[$key];
+			}
+
+			$pre_sql = str_replace('?', "'%s'", $sql);
+			$real_sql = call_user_func_array("sprintf", array_merge(array($pre_sql), $bind_value) );
+
+			if(!$after_query = $mysqli->query($real_sql)){
+				self::$error = $mysqli->error;
+				return false;
+			}else{
+				self::$query = $after_query;
+				return $after_query;
+			}
+
+		}else if(extension_loaded('mysqlnd')!==false && $items!==null){
 			if (!($stmt = $mysqli->prepare($sql))) {
 			    self::$error = $mysqli->error;
 			    return false;
@@ -39,7 +59,7 @@ class DBi{
 
 			call_user_func_array(array($stmt, "bind_param"), array_merge(array($bind_text), $bind_value) );
 			if($stmt->execute()===true){
-				self::$query = $stmt->get_result();;
+				self::$query = $stmt->get_result();
 				return self::$query;
 			}else{
 				self::$error = $mysqli->error;
@@ -63,12 +83,24 @@ class DBi{
 	}
 
 	public static function fetch_assoc(){
-		$query = self::$query;
-		$items = array();
-		while($item = $query->fetch_assoc()){
-			$items[] = $item;
+		if(extension_loaded('mysqlnd')){
+			$query = self::$query;
+			$items = array();
+			while($item = $query->fetch_assoc()){
+				$items[] = $item;
+			}
+			return $items;
+		}else{
+			while (self::$stmti->fetch()) { 
+		        foreach($row as $key => $val) 
+		        { 
+		            $c[$key] = $val; 
+		        } 
+		        $result[] = $c; 
+		    }
+		    return $result;
 		}
-		return $items;
+			
 	}
 
 	public static function insert($table, $items){

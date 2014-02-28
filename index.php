@@ -9,6 +9,9 @@ define('AM_TEMP_DIR', str_replace("\\", "/", dirname(__FILE__)));
 define('ROOT_TEMP', str_replace($_SERVER['DOCUMENT_ROOT']."/", "", AM_TEMP_DIR));
 define('AM_APPLICATION', ROOT_TEMP."/modules/");
 
+ini_set("display_errors", "1");
+ini_set("error_reporting", E_ALL & ~E_NOTICE);
+
 require_once 'lang/tem_thai_utf8.php';
 require_once 'lib/database.php';
 require_once 'lib/language.php';

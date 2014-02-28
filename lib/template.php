@@ -12,6 +12,15 @@ class AM_Template{
         if($ajax > 0){
             $this->load_ajax();
         }
+
+        // Old style for main Maxsite
+        if(count((array)$db)>8){
+            $this->db = $db;
+        }else{
+            $db = New DB();
+            $connect = $db->connectdb(DB_NAME,DB_USERNAME,DB_PASSWORD);
+            $this->db = $connect;
+        }
     }
 
     public function loadBlock($position = '') {
