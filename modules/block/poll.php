@@ -6,7 +6,7 @@ $poll = $query->fetch_assoc();
 $session_id = session_id();
 
 // Check vote yet?
-$query = DBi::select("SELECT * FROM `".TB_POLL_VOTES."` WHERE `poll_id` = ? AND `ip`=?;", array($poll['id'], $session_id));
+$query = DBi::select("SELECT * FROM `".TB_POLL_VOTES."` WHERE `poll_id`=? AND `ip`=?;", array($poll['id'], $session_id));
 $vote = $query->fetch_assoc();
 ?>
 <style type="text/css">
@@ -22,7 +22,7 @@ $vote = $query->fetch_assoc();
 .vote-amount{text-align: center; color: #999;}
 </style>
 <?php
-if($vote===false){
+if(!$vote){
 	?>
 	<div class="poll-display">
 		<p class="poll-title"><?php echo $poll['poll_question']?>:</p>
