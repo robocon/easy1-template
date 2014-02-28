@@ -1,13 +1,13 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
-
-$query = $db->select_query("SELECT * FROM `".TB_POLL."` ORDER BY `id` DESC LIMIT 1");
-$poll = $db->fetch($query);
+DBi::connect();
+$query = DBi::select("SELECT * FROM `".TB_POLL."` ORDER BY `id` DESC LIMIT 1");
+$poll = $query->fetch_assoc();
 
 $session_id = session_id();
 
 // Check vote yet?
-$query = $db->select_query("SELECT * FROM `".TB_POLL_VOTES."` WHERE `poll_id` = '".$poll['id']."' AND `ip`='$session_id';");
-$vote = $db->rows($query);
+$query = DBi::select("SELECT * FROM `".TB_POLL_VOTES."` WHERE `poll_id` = ? AND `ip`=?;", array($poll['id'], $session_id));
+$vote = $query->fetch_assoc();
 ?>
 <style type="text/css">
 .poll-display ul{list-style: none; margin: 0; padding: 0;}
@@ -84,15 +84,14 @@ if($vote===false){
 	<?php
 }else if($vote>0){
 
-	$sql = "SELECT `vote_id`, COUNT(`vote_id`) AS `vote_rows` FROM `".TB_POLL_VOTES."` WHERE `poll_id` = '".$poll['id']."'GROUP BY `vote_id` ORDER BY `vote_id` ASC;";
-	$query = $db->select_query($sql);
+	$sql = "SELECT `vote_id`, COUNT(`vote_id`) AS `vote_rows` FROM `".TB_POLL_VOTES."` WHERE `poll_id` = ? GROUP BY `vote_id` ORDER BY `vote_id` ASC;";
+	$query = DBi::select($sql, array($poll['id']));
 	$newItems = array();
 	$amount = 0;
-	while($item = $db->fetch($query)){
+	while($item = $query->fetch_assoc()){
 		$newItems[$item['vote_id']] = $item['vote_rows'];
 		$amount += (int) $item['vote_rows'];
 	}
-
 	?>
 	<div class="poll-display">
 		<p class="poll-title"><?php echo $poll['poll_question']?>:</p>

@@ -1,7 +1,9 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
 
 $action = addslashes($_GET['action']);
-if($action==="add"){
+if($action===""){
+	include "modules/member/member_edit.php";
+}else if($action==="add"){
 	if($_POST['token']!==$_SESSION['token']){
 		header('Location: index.php?name=member&file=index');
 		$_SESSION['x_message'] = $l->t("Incorrect data.");

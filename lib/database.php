@@ -21,28 +21,38 @@ class DBi{
 		}
 	}
 
-	public static function select($sql, $items){
+	public static function select($sql, $items=null){
 		$mysqli = self::connect();
 
-		if (!($stmt = $mysqli->prepare($sql))) {
-		    self::$error = $mysqli->error;
-		    return false;
-		}
+		if($items!==null){
+			if (!($stmt = $mysqli->prepare($sql))) {
+			    self::$error = $mysqli->error;
+			    return false;
+			}
 
-		$bind_text = "";
-		$bind_value = array();
-		foreach($items AS $key => $value){
-			$bind_value[] = & $items[$key];
-			$bind_text .= "s";
-		}
+			$bind_text = "";
+			$bind_value = array();
+			foreach($items AS $key => $value){
+				$bind_value[] = & $items[$key];
+				$bind_text .= "s";
+			}
 
-		call_user_func_array(array($stmt, "bind_param"), array_merge(array($bind_text), $bind_value) );
-		if($stmt->execute()===true){
-			self::$query = $stmt->get_result();;
-			return self::$query;
+			call_user_func_array(array($stmt, "bind_param"), array_merge(array($bind_text), $bind_value) );
+			if($stmt->execute()===true){
+				self::$query = $stmt->get_result();;
+				return self::$query;
+			}else{
+				self::$error = $mysqli->error;
+				return false;
+			}
 		}else{
-			self::$error = $mysqli->error;
-			return false;
+			if(!$after_query = $mysqli->query($sql)){
+				self::$error = $mysqli->error;
+				return false;
+			}else{
+				self::$query = $after_query;
+				return $after_query;
+			}
 		}
 	}
 

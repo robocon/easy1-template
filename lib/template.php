@@ -12,22 +12,12 @@ class AM_Template{
         if($ajax > 0){
             $this->load_ajax();
         }
-
-        if(count((array)$db)>8){
-            $this->db = $db;
-        }else{
-            $db = New DB();
-            $connect = $db->connectdb(DB_NAME,DB_USERNAME,DB_PASSWORD);
-            $this->db = $connect;
-        }
-
-
     }
 
     public function loadBlock($position = '') {
-        $db = $this->db;
-        $query = $db->select_query("SELECT * FROM `".TB_BLOCK."` WHERE `pblock`='$position' AND `status` = 1 ORDER BY `sort` ASC");
-        while ($item = $db->fetch($query)) {
+	DBi::connect();
+	$query = DBi::select("SELECT * FROM `".TB_BLOCK."` WHERE `pblock`=? AND `status` = 1 ORDER BY `sort` ASC", array($position));
+        while ($item = $query->fetch_assoc()) {
             if ($position == 'left' 
                     || $position == 'right'
                     || $position == 'center'
@@ -38,13 +28,13 @@ class AM_Template{
                     <div class="modules-sub-title"></div>
                     <div class="modules-data">
                         <?php
-                        $this->loadCode($item);
+			$this->loadCode($item);
                         ?>
                     </div>
                 </div>
                 <?php
             } else {
-                $this->loadCode($item);
+		$this->loadCode($item);
             }
         }
     }
@@ -76,8 +66,7 @@ class AM_Template{
     }
 
     public function block_count($positions){
-        $db = $this->db;
-        
+	$dbi = DBi::connect();
         $locations = array();
         foreach ($positions as $value) {
             $locations[] = "'{$value}'";
@@ -86,24 +75,21 @@ class AM_Template{
         $after_positions = implode(',', $locations);
         $sql = "SELECT `pblock`,COUNT(pblock) AS `prow`
 FROM `".TB_BLOCK."` 
-WHERE pblock in({$after_positions}) AND `status` = 1
+WHERE `pblock` IN( $after_positions ) AND `status` = 1
 GROUP BY `pblock` 
 ORDER BY `pblock` ASC;";
-        $query = $db->select_query($sql);
-        
+	$res = DBi::select($sql);
         $items = array();
-        while($item = $db->fetch($query)){
+        while($item = $res->fetch_assoc()){
             $pblock = $item['pblock'];
             $count = $item['prow'];
             $items[$pblock] = $count;
         }
-        
         foreach($positions AS $position){
             if(array_key_exists($position, $items)===false){
                 $items[$position] = 0;
             }
         }
-        
         return $items;
     }
 

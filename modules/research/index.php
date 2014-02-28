@@ -4,6 +4,8 @@ defined('AM_EXEC') or die('Restricted access');
 $category = empty($_GET['category']) ? "" : intval($_GET['category']);
 $fields = empty($_POST['fields']) ?  "" : addslashes($_POST['fields']);
 $keyword = empty($_POST['keyword']) ?  "" : addslashes($_POST['keyword']);
+
+DBi::connect();
 ?>
 <script language='JavaScript'>
 function checkboard() {
@@ -27,7 +29,7 @@ function checkboard() {
 	<tr>
 		<td>
 			<?php
-			if ($admin_user || $login_true) {
+			if ($_SESSION['admin_user'] || $_SESSION['login_true']) {
 			?>
 				<a href="index.php?name=admin&file=research&op=research_add"><img src="images/admin/book.gif"  border="0" align="absmiddle"><?= $l->t('Add research'); ?></a>
 			<?php
@@ -46,7 +48,7 @@ function checkboard() {
 					<option value="headline" <?php if ($fields == 'headline') { echo "selected"; } ?>><?= _FROM_SEARCH_FIELD_HEADLINE; ?></option>
 				</select>
 				<input type="hidden" name="category" value="<?= $category; ?>">
-				<input type="submit" class="es1-button" name="Submit" value="<?= $l->t('Search'); ?>">
+				<input type="submit" class="pure-button pure-button-primary" name="Submit" value="<?= $l->t('Search'); ?>">
 				<img src="images/admin/opendir.gif" align="absmiddle"><a href="?name=research"><?= $l->t('See all'); ?></a>
 			</form>
 		</td>
@@ -59,8 +61,8 @@ function checkboard() {
 				<select name="category" onchange="if (options[selectedIndex].value) { window.location = options[selectedIndex].value } ; ">
 					<option value="?name=research"><?= _FROM_SEARCH_CAT_ALL; ?></option>
 <?php
-$cat_search = $db->select_query("SELECT * FROM " . TB_RESEARCH_CAT . " ORDER BY sort  ");
-while ($item = $db->fetch($cat_search)) {
+$cat_search = DBi::select("SELECT * FROM " . TB_RESEARCH_CAT . " ORDER BY sort;");
+while ($item = $cat_search->fetch_assoc()) {
 	$cat_select = '';
 	if ($category == $item['id']) {
 		$cat_select = "selected";
@@ -95,7 +97,7 @@ if ($category!='' || $keyword!=='') {
 	}
 }
 $limit = 20;
-$SUMPAGE = $db->num_rows(TB_RESEARCH, "id", "$where");
+$SUMPAGE = DBi::select("SELECT id FROM ".TB_RESEARCH." ".$where);
 
 if (empty($page)) {
 	$page = 1;
@@ -114,10 +116,10 @@ $goto = ($page - 1) * $limit;
 			<th width="50"><?= $l->t('Download file');?></th>
 		</tr>  
 		<?php
-		$research_sql = $db->select_query("SELECT * FROM " . TB_RESEARCH . " $where ORDER BY id DESC LIMIT $goto, $limit ");
+		$research_sql = DBi::select("SELECT * FROM " . TB_RESEARCH . " $where ORDER BY id DESC LIMIT $goto, $limit ");
 		$rank = 1;
 		$count = 0;
-		while ($research = $db->fetch($research_sql)) {
+		while ($research = $research_sql->fetch_assoc()) {
 			if ($page > 1) {
 				$p = $page * 10;
 				$ranks = $rank + $p;
@@ -128,12 +130,9 @@ $goto = ($page - 1) * $limit;
 		<tr>
 			<td valign="top">
 		<?php
-		$query = $db->select_query("SELECT * FROM " . TB_RESEARCH_CAT . " WHERE id='" . $research['category'] . "' ");
-		$arr['category'] = $db->fetch($query);
+		$query = DBi::select("SELECT * FROM " . TB_RESEARCH_CAT . " WHERE id=?;", array($research['category']));
+		$research_category = $query->fetch_assoc();
 		$newsid = $research['id'];
-		
-		$ress['com'] = $db->select_query("SELECT *,count(id) as com FROM " . TB_RESEARCH_COMMENT . " WHERE id ='" . $newsid . "' group by id");
-		$arrs['com'] = $db->fetch($ress['com']);
 
 		//Comment Icon
 		$CommentIcon = "";
@@ -142,8 +141,7 @@ $goto = ($page - 1) * $limit;
 		}
 
 		echo $ranks;
-		if ($admin_user) {
-			//Admin Login Show Icon
+		if ($_SESSION['admin_user']) {
 			?>
 			<a href="?name=admin&file=research&op=research_edit&id=<?php echo $research['id']; ?>"><img src="images/admin/edit.gif" alt="<?= _FROM_IMG_EDIT; ?>" title="<?= _FROM_IMG_EDIT; ?>"></a> 
 			<a href="javascript:Confirm('?name=admin&file=research&op=research_del&id=<?php echo $research['id']; ?>&prefix=<?php echo $research['post_date']; ?>','<?php echo _FROM_COMFIRM_DEL; ?>');"><img src="images/admin/trash.gif" alt="<?= _FROM_IMG_DEL; ?>" title="<?= _FROM_IMG_DEL; ?>"></a>
@@ -161,7 +159,7 @@ $goto = ($page - 1) * $limit;
 				<?php echo ThaiTimeConvert($research['post_date'], '', ''); ?>
 			</td>
 			<td align="center" valign="top">
-				<?php echo $arr['category']['category_name']; ?>
+				<?php echo $research_category['category_name']; ?>
 			</td>
 			<td align="center"  valign="top">
 				<?php

@@ -1,12 +1,12 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
-$db->connectdb(DB_NAE,DB_USERNAME,DB_PASSWORD);
+DBi::connect();
 $sql = "SELECT b.id,a.rm_news,a.rm_image,a.rm_topic FROM `".TB_RANDOM."` AS a
 LEFT JOIN `".TB_NEWS."` AS b ON a.`rm_news` = b.`id`
 WHERE a.`status` = 1 AND b.`ran` = 1
 ORDER BY a.`id` DESC 
 LIMIT 10";
-$query = $db->select_query($sql);
-$rows = $db->rows($query);
+$query = DBi::select($sql);
+$rows = $query->num_rows;
 if($rows > 0){
 	?>
 	<!-- bxSlider Javascript file -->
@@ -28,7 +28,7 @@ if($rows > 0){
 	</script>
 	<ul class="bxslider">
 	<?php
-	while($item = $db->fetch($query)){
+	while($item = $query->fetch_assoc()){
 		?>
 		<li>
 			<a href="<?php echo 'index.php?name=news&file=readnews&id='.$item['id'];?>">

@@ -15,10 +15,9 @@
 	</tr>
 </table>
 <?php
-$sql = "SELECT * FROM `web_calendar` WHERE `date_event` >= DATE(NOW()) ORDER BY `date_event` ASC";
-$query = $db->select_query($sql);
-$rows = $db->rows($query);
-
+$mysqli = DBi::connect();
+$select = DBi::select("SELECT * FROM `web_calendar` WHERE `date_event` >= DATE(NOW()) ORDER BY `date_event` ASC");
+$rows = $select->num_rows;
 if($rows > 0){
 ?>
 <style type="text/css">
@@ -32,7 +31,7 @@ if($rows > 0){
 	<div class="modules-sub-title"></div>
 	<ul id="event-lists">
 	<?php
-	while ($event = $db->fetch($query)) {
+	while($event = $select->fetch_assoc()){
 		?>
 		<li>
 			<a href="index.php?name=calendar&file=view&dates=<?php echo $event['date_event']?>" target="_blank"><?php echo $event['subject']; ?></a>

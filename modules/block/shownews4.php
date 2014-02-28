@@ -1,5 +1,13 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
-$news4_query = $db->select_query("SELECT * FROM " . TB_NEWS . " WHERE category = 2 ORDER BY id DESC LIMIT 0, 9 ");
+DBi::connect();
+$sql = "SELECT a.*,b.news_rows FROM ".TB_NEWS." AS a
+LEFT JOIN (
+	SELECT COUNT(*) AS news_rows, news_id FROM ".TB_NEWS_COMMENT." GROUP BY news_id
+) AS b ON b.news_id = a.id
+WHERE a.category = 2
+ORDER BY a.id DESC LIMIT 0, 9";
+$select = DBi::select($sql);
+
 $i = 1;
 ?>
 <style type="text/css">
@@ -13,11 +21,8 @@ $i = 1;
 </style>
 <ul id="general-lists">
     <?php
-    while ($news4 = $db->fetch($news4_query)) {
-        
-        $all_rows = $db->num_rows(TB_NEWS_COMMENT,"id"," news_id = ".$news4['id']);
-        $comment = $all_rows==FALSE ? "0" : $all_rows ;
-
+	while($news4 = $select->fetch_assoc()){
+	$comment = $news4['news_rows']===null ? "0" : $news4['news_rows'] ;
         $head = $i<=4 ? 'class="general-headline"' : '' ;
     ?>
     <li <?php echo $head ?>>
@@ -37,7 +42,7 @@ $i = 1;
             }
             ?>
         </div>
-        <span class="modules-details"><?php echo $news4['posted']?>&nbsp;&middot;&nbsp;<?php echo ThaiTimeConvert($news4['post_date'], NULL, NULL)?>&nbsp;&middot;&nbsp;<?php echo $comment?> ความคิดเห็น</span>
+	<span class="modules-details"><?php echo $news4['posted']?>&nbsp;&middot;&nbsp;<?php echo ThaiTimeConvert($news4['post_date'], NULL, NULL)?>&nbsp;&middot;&nbsp;<?php echo $comment?>&nbsp;<?= $l->t("Comments")?></span>
     </li>
     <?php
         $i++;

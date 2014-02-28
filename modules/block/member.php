@@ -64,12 +64,11 @@ if(!isset($_SESSION['login_true']) && !isset($_SESSION['admin_user'])){
     <?php
 }else{
     $name = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : $_SESSION['login_true'] ;
-    
-    $query = $db->select_query("SELECT * FROM ".TB_MEMBER." WHERE user='{$name}' ");
-    $user = $db->fetch($query);
-    
-    $thumb = 'icon/'.$user['member_pic'];
-    $user_thumb = is_file($thumb) ? $thumb : 'icon/member_nrr.gif' ;
+	DBi::connect();
+	$connect = DBi::select("SELECT * FROM ".TB_MEMBER." WHERE user=?;", array($name));
+	$user = $connect->fetch_assoc(); 
+	$thumb = 'icon/'.$user['member_pic'];
+	$user_thumb = is_file($thumb) ? $thumb : 'icon/member_nrr.gif' ;
     ?>
     <div id="user-logedin">
         <div id="user-logedin-name">

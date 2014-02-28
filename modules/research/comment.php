@@ -8,19 +8,21 @@ if (!$name OR !$comment OR $id==0) {
 	header('Location: index.php?name=research&file=readresearch&id='.$id);
 }
 
-if(!$login_true && !$admin_user){
+if(!$_SESSION['login_true'] && !$_SESSION['admin_user']){
 	if (USE_CAPCHA) {
 		check_captcha($_POST['security_code']);
 	}
 }
 
-$db->add_db(TB_RESEARCH_COMMENT, array(
+DBi::connect();
+$data = array(
     "research_id" => $id,
     "name" => htmlspecialchars($name),
     "comment" => $comment,
     "ip" => $IPADDRESS,
     "post_date" => TIMESTAMP
-));
+);
+Dbi::insert(TB_RESEARCH_COMMENT, $data);
 
 header('Location: index.php?name=research&file=readresearch&id='.$id);
 exit(0);

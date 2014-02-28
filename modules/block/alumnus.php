@@ -1,7 +1,7 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
-$result = $db->select_query("SELECT * FROM " . TB_ALUMNUS . " ORDER BY id DESC LIMIT 10");
-$NRow = $db->rows($result);
-
+$mysqli = DBi::connect();
+$select = DBi::select("SELECT * FROM " . TB_ALUMNUS . " ORDER BY id DESC LIMIT 10");
+$NRow = $select->num_rows;
 if ($NRow == 0) {
     ?>
     <p><b><?php echo $l->t('No data'); ?></b></p>
@@ -17,7 +17,7 @@ if ($NRow == 0) {
             <th><?php echo $l->t('Status'); ?></th>
         </tr>
         <?php
-        while ($arr = $db->fetch($result)) {
+	while($arr = $select->fetch_assoc()){
             $sex = "-";
             if ($arr['sex'] == "1") {
                 $sex = $l->t('Male');

@@ -1,6 +1,7 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
-$query = $db->select_query("SELECT `p_name`,`p_position`,`p_data`,`p_pic` FROM `".TB_personnel."` WHERE `boss`=1 LIMIT 1;");
-$head = $db->fetch($query);
+DBi::connect();
+$query = DBi::select("SELECT `p_name`,`p_position`,`p_data`,`p_pic` FROM `".TB_personnel."` WHERE `boss`=1 LIMIT 1;");
+$head = $query->fetch_assoc();
 ?>
 <style type="text/css">
 .personal-head{text-align: center;}
@@ -14,12 +15,11 @@ $head = $db->fetch($query);
 	<span class="personal-details"><?php echo $head['p_data'];?></span>
 </div>
 <?php
-
-$query = $db->select_query("SELECT `gp_id`, `gp_name` FROM `".TB_personnel_group."` ORDER BY `gp_id` ASC LIMIT 5;");
+$query = DBi::select("SELECT `gp_id`, `gp_name` FROM `".TB_personnel_group."` ORDER BY `gp_id` ASC LIMIT 5;");
 ?>
 <ul class="menu-lists">
 	<?php
-	while ($group = $db->fetch($query)) {
+	while($group = $query->fetch_assoc()){
 		?>
 		<li>
 			<a href="index.php?name=personnel&file=gdetail&id=<?php echo $group['gp_id'];?>"><?php echo $group['gp_name'];?></a>

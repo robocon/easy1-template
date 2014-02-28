@@ -10,14 +10,15 @@
 		<th width="25%"><?php echo $l->t('Category'); ?></th>
 	</tr>
 	<?php
+	DBi::connect();
 	$sql = "SELECT a.`id`,a.`topic`,a.`post_name`,a.`post_update`,b.`post_name` AS `comment_name`,c.`id` AS `category_id`, c.`category_name`
 FROM `".TB_WEBBOARD."` AS a
 LEFT JOIN `".TB_WEBBOARD_COMMENT."` AS b ON a.`post_update` = b.`post_date`
 LEFT JOIN `".TB_WEBBOARD_CAT."` AS c ON a.`category` = c.`id`
 ORDER BY a.`post_update` DESC 
 LIMIT 10";
-	$query = $db->select_query($sql);
-	while($item = $db->fetch($query)){
+	$query = DBi::select($sql);
+	while($item = $query->fetch_assoc()){
 		$post_name = empty($item['comment_name']) ? $item['post_name'] : $item['comment_name'] ;
 	?>
 	<tr>

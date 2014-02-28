@@ -16,12 +16,13 @@ if(empty($username) || empty($password) || empty($email) || empty($first_name) |
 	$error = true;
 	$msg = $l->t("You must fill in all of the fields.");
 }else{
-	
+
+	$mysqli = DBi::connect();
 	$sql = "SELECT a.`id`,a.`username`,b.`user` FROM `web_admin` AS a
 RIGHT JOIN `web_member` AS b ON b.`user` = a.`username`
-WHERE b.`user` = '$username' OR a.`username` = '$username'";
-	$query = $db->select_query($sql);
-	$rows = $db->rows($query);
+WHERE b.`user` = ? OR a.`username` = ?;";
+	$query = DBi::select($sql, array($username, $username));
+	$rows = $query->num_rows;
 	if($rows > 0){
 		$error = true;
 		$msg = $l->t("This username is already in use.");
@@ -32,10 +33,10 @@ WHERE b.`user` = '$username' OR a.`username` = '$username'";
 		$msg = $l->t("Please enter a valid email address.");
 	}else{
 		$sql = "SELECT a.`id`,a.`email`,b.`email` FROM `web_admin` AS a
-	RIGHT JOIN `web_member` AS b ON b.`user` = a.`username`
-	WHERE b.`email` = '$email' OR a.`email` = '$email'";
-		$query = $db->select_query($sql);
-		$rows = $db->rows($query);
+		RIGHT JOIN `web_member` AS b ON b.`user` = a.`username`
+		WHERE b.`email` = ? OR a.`email` = ?;";
+		$query = DBi::select($sql, array($email, $email));
+		$rows = $query->num_rows;
 		if($rows >0){
 			$error = true;
 			$msg = $l->t("This email is already in use.");

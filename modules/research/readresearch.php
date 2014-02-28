@@ -1,11 +1,6 @@
 <?php defined('AM_EXEC') or die('Restricted Access');
 include ("editor.php");
-//$res['user2'] = $db->select_query("SELECT * FROM " . TB_useronline . " ");
-//$rows['user2'] = $db->rows($res['user2']);
-//$arr['user2'] = $db->fetch($res['user2']);
-
-//$res['user'] = $db->select_query("SELECT * FROM " . TB_MEMBER . " WHERE user='" . $arr['user2']['useronline'] . "' ");
-//$arr['user'] = $db->fetch($res['user']);
+DBi::connect();
 ?>
 <script type="text/javascript">
 function showemotion() {
@@ -32,9 +27,9 @@ function emoticon(theSmilie) {
 				<table>
 					<?php
 					$id = intval($_GET['id']);
-					$query = $db->select_query("SELECT * FROM " . TB_RESEARCH . " WHERE id='" . $id . "' ");
-					$research = $db->fetch($query);
-					//$id = $research['id'];
+					$query = DBi::select("SELECT * FROM " . TB_RESEARCH . " WHERE id=?;", array($id));
+
+					$research = $query->fetch_assoc();
 					
 					if (!$research['id']) {
 						header('Location: index.php?name=research');
@@ -42,15 +37,16 @@ function emoticon(theSmilie) {
 						$content = $research['detail'];
 						$Detail = stripslashes(FixQuotes($content));
 
-						$query = $db->select_query("SELECT * FROM " . TB_RESEARCH . " WHERE id='" . $id . "' ");
-						$research = $db->fetch($query);
+						$query = DBi::select("SELECT * FROM " . TB_RESEARCH . " WHERE id=?;", array($id));
+						$research = $query->fetch_assoc();
+
 						$full = $research['full_text'];
 						$abst = $research['abstract'];
 
-						$Pageview = "UPDATE " . TB_RESEARCH . " SET pageview = pageview+1 WHERE id = '" . $id . "' ";
-						$db->select_query($Pageview);
-						$res['category'] = $db->select_query("SELECT * FROM " . TB_RESEARCH_CAT . " WHERE id='" . $research['category'] . "' ");
-						$arr['category'] = $db->fetch($res['category']);
+						DBi::update(TB_RESEARCH, array('pageview' => 'pageview+1'), "id={$id}");
+
+						$select = DBi::select("SELECT * FROM " . TB_RESEARCH_CAT . " WHERE id=?", array($research['category']));
+						$research_cat = $select->fetch_assoc();
 ?>
 			<tr>
 			    <td colspan="2">
@@ -68,7 +64,7 @@ function emoticon(theSmilie) {
 						</tr>
 						<tr>
 						    <td>
-							<b><?= _FORM_CAT; ?></b> <?= $arr['category']['category_name']; ?>
+							<b><?= _FORM_CAT; ?></b> <?= $research_cat['category_name']; ?>
 						    </td>
 						</tr>
 						<tr>
@@ -93,7 +89,7 @@ function emoticon(theSmilie) {
 						</tr>
 					    </table>
 					<?php
-					if ($admin_user) {
+					if ($_SESSION['admin_user']) {
 						//Admin Login Show Icon
 						?>
 						<a href="?name=admin&file=research&op=research_edit&id=<?php echo $research['id']; ?>"><img src="images/admin/edit.gif" border="0" alt="<?= _FROM_IMG_EDIT; ?>" ></a> 
@@ -104,13 +100,7 @@ function emoticon(theSmilie) {
 					</td>
 				    </tr>
 				    <tr>
-					<td colspan=2>
-<?php
-	//$rater_ids = $id;
-	//$rater_item_name = 'research';
-	//include("modules/rater/rater.php");
-?>
-					</td>
+						<td colspan=2> </td>
 				    </tr>
 				</table>
 			    </td>
@@ -148,23 +138,19 @@ function emoticon(theSmilie) {
 	<tr>
 		<td align="left">
 			<div>
-				<b><?= $arr['category']['category_name']; ?> <?= _FROM_LINK_FIVECONT; ?></b>
+				<b><?= $research_cat['category_name']; ?> <?= _FROM_LINK_FIVECONT; ?></b>
 			</div>
 			<?php
-			$res['cat_research'] = $db->select_query("SELECT * FROM " . TB_RESEARCH . " WHERE category='" . $arr['category']['id'] . "' ORDER BY id DESC LIMIT 5 ");
-			$rows['cat_research'] = $db->rows($res['cat_research']);
-
-//if (!$rows['cat_research']) {
-	//echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . _FROM_CAT_NO . "";
-//}
-
+			$sql = "SELECT * FROM " . TB_RESEARCH . " WHERE category=? ORDER BY id DESC LIMIT 5 ";
+			$query = DBi::select($sql, array($research_cat['id']));
+			$cat_research = $query->fetch_assoc();
 			?>
 			<ul>
 			<?php
-			while ($arr['cat_research'] = $db->fetch($res['cat_research'])) {
+			while ($arr_research = $query->fetch_assoc()) {
 				?>
 				<li>
-					<a href="?name=research&file=readresearch&id=<?= $arr['cat_research']['id']; ?>"><?= $arr['cat_research']['topic']; ?></a><?= ThaiTimeConvert($arr['cat_research']['post_date']); ?>
+					<a href="?name=research&file=readresearch&id=<?= $arr_research['id']; ?>"><?= $arr_research['topic']; ?></a><?= ThaiTimeConvert($arr_research['post_date']); ?>
 				</li>
 				<?php
 			}
@@ -184,24 +170,26 @@ if ($research['enable_comment']) {
 
 	$limit = 10;
 	$page = intval($_GET['page']);
-	$SUMPAGE = $db->num_rows(TB_RESEARCH_COMMENT, "research_id", "research_id=' " . $research['id'] . "'");
+
+	$query = DBi::select("SELECT research_id FROM ".TB_RESEARCH_COMMENT." WHERE research_id = ?", array($research['id']));
+	$sumpage = $query->num_rows;
 
 	if ($page === 0) {
 		$page = 1;
 	}
 
-	$rt = $SUMPAGE % $limit;
-	$totalpage = ($rt != 0) ? floor($SUMPAGE / $limit) + 1 : floor($SUMPAGE / $limit);
+	$rt = $sumpage % $limit;
+	$totalpage = ($rt != 0) ? floor($sumpage / $limit) + 1 : floor($sumpage / $limit);
 	$goto = ($page - 1) * $limit;
 
 	$sql = "SELECT a.*,b.`member_pic` FROM `".TB_RESEARCH_COMMENT."` AS a
 LEFT JOIN `".TB_MEMBER."` AS b ON b.`user` = a.`name`
 WHERE a.`research_id` = '1' 
 ORDER BY a.`id` ASC LIMIT $goto, $limit";
-	$query = $db->select_query($sql);
+	$query = DBi::select($sql);
 	$count = 1;
 
-	while ($comment = $db->fetch($query)) {
+	while ($comment = $query->fetch_assoc()) {
 	?>
 	<div class="comment-contain" id="comment<?= $count?>">
 	<?php
@@ -221,7 +209,7 @@ ORDER BY a.`id` ASC LIMIT $goto, $limit";
 			<?= (stripslashes($comment['comment'])); ?>
 		</div>
 <?php 
-		if ($admin_user) {
+		if ($_SESSION['admin_user']) {
 echo " <a href=\"?name=research&file=delete_comment&id=" . $id . "&comment=" . $comment['id'] . "\"><IMG SRC=\"images/admin/trash.gif\" ></a>";
 		}
 ?>
@@ -251,14 +239,14 @@ echo $ShowPages;
 					<table cellSpacing=5 cellPadding=0 width=550 border=0 align="center">
 					    <tr>
 						<td width="80" align="right"><B><?= _FROM_COMMENT_AUTH; ?> </B></td>
-						<td><INPUT TYPE="text" NAME="NAME" style="width:300" <?php if ($login_true) {
-							echo "value=\"" . $login_true . "\" readonly style=\"color: #FF0000\" ";
-						} ?><?php if ($admin_user) {
-							echo "value=\"" . $admin_user . "\" readonly style=\"color: #FF0000\" ";
+						<td><INPUT TYPE="text" NAME="NAME" style="width:300" <?php if ($_SESSION['login_true']) {
+							echo "value=\"" . $_SESSION['login_true'] . "\" readonly style=\"color: #FF0000\" ";
+						} ?><?php if ($_SESSION['admin_user']) {
+							echo "value=\"" . $_SESSION['admin_user'] . "\" readonly style=\"color: #FF0000\" ";
 						} ?>></td>
 					    </tr>
 <?php
-							if ($login_true || $admin_user) {
+							if ($_SESSION['login_true'] || $_SESSION['admin_user']) {
 
 							} else {
 								if (USE_CAPCHA) {

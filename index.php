@@ -22,10 +22,9 @@ $temp = new AM_Template($db);
 $positions = array('pathway', 'left', 'right', 'user2', 'center', 'user1', 'bottom');
 $locations = $temp->block_count($positions);
 
-$query_config = $db->select_query("SELECT * FROM " . TB_CONFIG." AS a WHERE a.posit IN('footer1','footer2')");
-
-$query_template = $db->select_query("SELECT * FROM " . TB_TEMPLATES." AS a WHERE a.sort=1 AND a.temname='easy1'");
-$template = $db->fetch($query_template);
+DBi::connect();
+$query_template = DBi::select("SELECT * FROM " . TB_TEMPLATES." AS a WHERE a.sort=1 AND a.temname='easy1'");
+$template = $query_template->fetch_assoc();
 ?>
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
@@ -50,7 +49,7 @@ $template = $db->fetch($query_template);
     </head>
 
     <body>
-        <?php if($template!==false){ ?>
+        <?php if($template){ ?>
         <div id="logo-container">
             <div class="wrapper clearfix">
                 <img src="templates/easy1/images/config/<?php echo $template['picname']?>">
@@ -185,9 +184,9 @@ $template = $db->fetch($query_template);
                     </ul>
                 </nav>
                 <div id="footer-detials">
-                    <?php while($config = $db->fetch($query_config)){ ?>
-                    <p><?php echo $config['name']?></p>
-                    <?php } ?>
+			<?php $config = AM_Utilities::get_config(); ?>
+                    <p><?php echo $config['footer1']?></p>
+                    <p><?php echo $config['footer2']?></p>
                     <p>HTML5 Template from <a href="http://www.initializr.com/">Initializr</a>, redesign by <a href="mailto:kinglizardsg@gmail.com">KinglizardSG</a></p>
                 </div>
             </footer>

@@ -20,11 +20,10 @@
 </div>
 <ul class="menu-lists" id="mainmenu-lists">
     <?php
-    $sql = "SELECT `name`, `menuname`, `links`, `target` FROM `".TB_PAGE."` WHERE `status`='1' AND `menugr`='mainmenu' ORDER BY `sort` ASC";
-    $query = $db->select_query($sql);
-
-    while ($item = $db->fetch($query)) {
-        
+	DBi::connect();
+	$sql = "SELECT `name`, `menuname`, `links`, `target` FROM `".TB_PAGE."` WHERE `status`='1' AND `menugr`='mainmenu' ORDER BY `sort` ASC";
+	$select = DBi::select($sql);
+	while($item = $select->fetch_assoc()){
         if (!is_null($item['links'])) {
             $uri = $item['links'];
         } else {

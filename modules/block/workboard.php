@@ -14,13 +14,13 @@ include("modules/admin/workboard/includes/functions.php");
         <th width="20">%</th>
     </tr>
     <?php
+	DBi::connect();
     $sql = "SELECT a.*, b.status_name FROM"
             . " ".TB_WORKBOARD_PROJECTS." AS a LEFT JOIN ".TB_WORKBOARD_STATUS." AS b ON a.status_id = b.status_id"
             . " ORDER BY a.project_name LIMIT 10";
-
-    $projectresult = $db->select_query($sql);
+	$query = DBi::select($sql);
     $count = 0;
-    while ($project = $db->fetch($projectresult)) {
+	while($project = $query->fetch_assoc()){
         // Check status
         $status = !empty($project['status_name']) ? $project['status_name'] : "<i>" . $l->t('None') . "</i>";
 

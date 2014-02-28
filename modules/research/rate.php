@@ -6,10 +6,12 @@ if ($filess !== "abstract" && $filess !== "full_text") {
     header('Location: index.php');
     exit;
 }
-$query = $db->select_query("SELECT " . $filess . " FROM " . TB_RESEARCH . " WHERE id=" . $id . "");
-$fetch = $db->fetch($query);
 
-$db->select_query("UPDATE " . TB_RESEARCH . " SET rate = rate+1 WHERE id = '" . $id . "'");
+DBi::connect();
+$query = DBi::select("SELECT ".$filess." FROM ".TB_RESEARCH." WHERE id=?", array($id));
+$fetch = $query->fetch_assoc();
+
+DBi::update(TB_RESEARCH, array('rate' => 'rate+1'), "id={$id}");
 
 $wb_picture = "data/" . $fetch[$filess];
 header('Content-Description: File Transfer');
