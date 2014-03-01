@@ -31,9 +31,11 @@
 }
 .gallery-edit{
     top: 4px;
-    right: 4px;
+    right: 0;
     position: absolute;
     display: none;
+    background-color: white;
+    padding:.2em .4em;
 }
 .gallery-cover:hover .gallery-edit{
     display: block;
